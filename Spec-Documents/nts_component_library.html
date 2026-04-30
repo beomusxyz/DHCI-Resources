@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTS Component Library -- Group 27</title>
+
+<!-- ============================================================
+     TX-02 FONT STACK (Berkeley Mono)
+     All .woff2 files must be in a fonts/ folder next to this HTML.
+     ============================================================ -->
+<style>
+/* Regular */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Regular Oblique */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Oblique.woff2') format('woff2');
+  font-weight: 400;
+  font-style: oblique;
+  font-display: swap;
+}
+/* Medium */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* Medium Oblique */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Medium-Oblique.woff2') format('woff2');
+  font-weight: 500;
+  font-style: oblique;
+  font-display: swap;
+}
+/* Bold */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Bold Oblique */
+@font-face {
+  font-family: 'TX-02';
+  src: url('fonts/TX-02-Bold-Oblique.woff2') format('woff2');
+  font-weight: 700;
+  font-style: oblique;
+  font-display: swap;
+}
+/* Retina -- optimised for small sizes, use at --text-xs (11px) */
+@font-face {
+  font-family: 'TX-02-Retina';
+  src: url('fonts/TX-02-Retina.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'TX-02-Retina';
+  src: url('fonts/TX-02-Retina-Oblique.woff2') format('woff2');
+  font-weight: 400;
+  font-style: oblique;
+  font-display: swap;
+}
+/* SemiCondensed -- for data-dense tables (diagnostics panel) */
+@font-face {
+  font-family: 'TX-02-SemiCondensed';
+  src: url('fonts/TX-02-SemiCondensed.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'TX-02-SemiCondensed';
+  src: url('fonts/TX-02-Medium-SemiCondensed.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* Condensed -- for VR HUD panels where space is constrained */
+@font-face {
+  font-family: 'TX-02-Condensed';
+  src: url('fonts/TX-02-Condensed.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'TX-02-Condensed';
+  src: url('fonts/TX-02-Medium-Condensed.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+</style>
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Single source of truth. Edit here → updates everything.
+   ============================================================ */
+:root {
+
+  /* Typography */
+  --font:           'TX-02', 'Courier New', monospace;
+  --font-retina:    'TX-02-Retina', 'TX-02', monospace;        /* timestamps, badges, metadata */
+  --font-condensed: 'TX-02-Condensed', 'TX-02', monospace;     /* VR HUD panels */
+  --font-data:      'TX-02-SemiCondensed', 'TX-02', monospace; /* diagnostics table rows */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   17px;
+  --text-lg:   21px;
+  --text-xl:   27px;
+  --text-2xl:  35px;
+
+  /* Spacing (8px grid) */
+  --sp1:  4px;
+  --sp2:  8px;
+  --sp3:  12px;
+  --sp4:  16px;
+  --sp5:  24px;
+  --sp6:  32px;
+  --sp7:  48px;
+  --sp8:  64px;
+
+  /* Base colours */
+  --color-bg:              #F8F8F6;
+  --color-surface:         #FFFFFF;
+  --color-surface-raised:  #F2F2EF;
+  --color-border:          #DDDDD8;
+  --color-border-strong:   #AAAAAA;
+  --color-text-primary:    #1A1A18;
+  --color-text-secondary:  #5A5A56;
+  --color-text-tertiary:   #8A8A84;
+
+  /* Role accents */
+  --color-student:         #1A5FA8;
+  --color-student-bg:      #EBF3FC;
+  --color-lecturer:        #2D6B1F;
+  --color-lecturer-bg:     #EBF5E4;
+  --color-admin:           #A82020;
+  --color-admin-bg:        #FCEBEB;
+
+  /* Semantic / status */
+  --color-success:         #1E7A3E;
+  --color-success-bg:      #E8F5EE;
+  --color-warning:         #A85C00;
+  --color-warning-bg:      #FEF3E2;
+  --color-critical:        #A81A1A;
+  --color-critical-bg:     #FCEBEB;
+  --color-info:            #1A5FA8;
+  --color-info-bg:         #EBF3FC;
+
+  /* Radius */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  10px;
+
+  /* Animation */
+  --dur-fast:   150ms;
+  --dur-mid:    250ms;
+  --dur-slow:   350ms;
+  --ease-out:   cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in:    cubic-bezier(0.4, 0.0, 1, 1);
+  --ease-inout: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ============================================================
+   DARK MODE TOKEN OVERRIDES
+   Triggered by [data-theme="dark"] on <html>.
+   All colour tokens swap -- everything else unchanged.
+   ============================================================ */
+[data-theme="dark"] {
+  --color-bg:              #141412;
+  --color-surface:         #1E1E1C;
+  --color-surface-raised:  #272724;
+  --color-border:          #333330;
+  --color-border-strong:   #4A4A46;
+  --color-text-primary:    #F0F0EC;
+  --color-text-secondary:  #A8A8A2;
+  --color-text-tertiary:   #686862;
+
+  /* Role accents -- lightened for dark bg, AAA verified */
+  --color-student:         #5B9FE0;
+  --color-student-bg:      #1A2E42;
+  --color-lecturer:        #6BBF4E;
+  --color-lecturer-bg:     #1A2E1A;
+  --color-admin:           #E06060;
+  --color-admin-bg:        #2E1A1A;
+
+  /* Semantic -- lightened for dark bg */
+  --color-success:         #4BBF74;
+  --color-success-bg:      #132A1E;
+  --color-warning:         #E09040;
+  --color-warning-bg:      #2A1E0A;
+  --color-critical:        #E05555;
+  --color-critical-bg:     #2A1010;
+  --color-info:            #5B9FE0;
+  --color-info-bg:         #1A2E42;
+}
+
+/* Smooth token transition on theme switch */
+body {
+  transition:
+    background-color var(--dur-mid) var(--ease-inout),
+    color var(--dur-mid) var(--ease-inout);
+}
+
+/* ============================================================
+   TARGETED FONT VARIANT USAGE
+   Retina  → small text (badges, timestamps, metadata)
+   Condensed → VR HUD (space-constrained overlay)
+   SemiCondensed → data tables (diagnostics, live rows)
+   ============================================================ */
+.live-timestamp,
+.badge,
+.component-label,
+.hud-panel-title,
+.hud-lock-badge,
+.navbar-role-pill,
+.input-error-msg {
+  font-family: var(--font-retina);
+}
+
+.hud-panel,
+.hud-panel * {
+  font-family: var(--font-condensed);
+}
+
+.live-row,
+.live-row * {
+  font-family: var(--font-data);
+}
+
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  padding: var(--sp7) var(--sp8);
+}
+
+/* ============================================================
+   DOCS LAYOUT (not part of component system -- doc chrome only)
+   ============================================================ */
+.doc-title {
+  font-size: var(--text-xl);
+  font-weight: 500;
+  margin-bottom: var(--sp2);
+  letter-spacing: -0.01em;
+}
+.doc-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--sp7);
+  letter-spacing: 0.02em;
+}
+.section {
+  margin-bottom: var(--sp8);
+}
+.section-title {
+  font-size: var(--text-md);
+  font-weight: 500;
+  margin-bottom: var(--sp5);
+  padding-bottom: var(--sp2);
+  border-bottom: 1px solid var(--color-border);
+  letter-spacing: 0.02em;
+}
+.component-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp5);
+  align-items: flex-start;
+  margin-bottom: var(--sp5);
+}
+.component-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp3);
+}
+.component-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+pre {
+  background: #1A1A18;
+  color: #E8E8E4;
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  padding: var(--sp4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  line-height: 1.6;
+  margin-top: var(--sp3);
+}
+hr.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--sp6) 0;
+}
+
+
+/* ============================================================
+
+   COMPONENT STYLES
+   Copy any block below into Figma CSS or your working file.
+
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   1. BUTTONS
+   Usage: primary action, secondary action, destructive action.
+   Min target size: 44×44px (WCAG 2.5.5).
+   ------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp2);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  min-height: 44px;
+  padding: 0 var(--sp5);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Focus visible -- role accent override in context */
+.btn:focus-visible {
+  outline: 3px solid var(--color-student);
+  outline-offset: 3px;
+}
+
+/* Primary */
+.btn-primary {
+  background: var(--color-text-primary);
+  color: var(--color-surface);
+  border-color: var(--color-text-primary);
+}
+.btn-primary:hover {
+  background: #2E2E2A;
+  border-color: #2E2E2A;
+}
+.btn-primary:active {
+  background: #000;
+}
+
+/* Secondary */
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+.btn-secondary:hover {
+  background: var(--color-surface-raised);
+  border-color: var(--color-text-secondary);
+}
+
+/* Destructive */
+.btn-destructive {
+  background: var(--color-critical);
+  color: var(--color-surface);
+  border-color: var(--color-critical);
+}
+.btn-destructive:hover {
+  background: #8A1515;
+}
+
+/* Role-tinted primary variants */
+.btn-student   { background: var(--color-student);  border-color: var(--color-student);  color: #fff; }
+.btn-lecturer  { background: var(--color-lecturer); border-color: var(--color-lecturer); color: #fff; }
+.btn-admin     { background: var(--color-admin);    border-color: var(--color-admin);    color: #fff; }
+.btn-student:hover  { background: #164E8C; }
+.btn-lecturer:hover { background: #245517; }
+.btn-admin:hover    { background: #8A1A1A; }
+
+/* Disabled -- applies to any btn variant */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Small variant */
+.btn-sm {
+  font-size: var(--text-xs);
+  min-height: 32px;
+  padding: 0 var(--sp3);
+}
+
+
+/* ------------------------------------------------------------
+   2. BADGES / STATUS TAGS
+   Always pair colour with a text label -- never colour alone.
+   ------------------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp1);
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: var(--sp1) var(--sp2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.badge-success  { background: var(--color-success-bg);  color: var(--color-success);  }
+.badge-warning  { background: var(--color-warning-bg);  color: var(--color-warning);  }
+.badge-critical { background: var(--color-critical-bg); color: var(--color-critical); }
+.badge-info     { background: var(--color-info-bg);     color: var(--color-info);     }
+.badge-neutral  { background: var(--color-surface-raised); color: var(--color-text-secondary); }
+
+/* Role badges */
+.badge-student  { background: var(--color-student-bg);  color: var(--color-student);  }
+.badge-lecturer { background: var(--color-lecturer-bg); color: var(--color-lecturer); }
+.badge-admin    { background: var(--color-admin-bg);    color: var(--color-admin);    }
+
+/* Status dot (always precedes text in status badges) */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-success  { background: var(--color-success);  }
+.dot-warning  { background: var(--color-warning);  }
+.dot-critical { background: var(--color-critical); }
+.dot-neutral  { background: var(--color-border-strong); }
+
+
+/* ------------------------------------------------------------
+   3. CARDS
+   Base container for dashboard panels, module items, etc.
+   ------------------------------------------------------------ */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp5);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp4);
+}
+
+.card-title {
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.card-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--sp1);
+}
+
+/* Alert card variant -- used for priority issues */
+.card-alert {
+  border-left: 3px solid var(--color-critical);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.card-alert-warning {
+  border-left: 3px solid var(--color-warning);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+
+/* ------------------------------------------------------------
+   4. PROGRESS BAR
+   Used for: student module progress, download status,
+   session progress in HUD, battery level in diagnostics.
+   ------------------------------------------------------------ */
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp1);
+}
+
+.progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--color-surface-raised);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-text-primary);
+  transition: width var(--dur-slow) var(--ease-inout);
+}
+
+/* Variants */
+.progress-fill-student  { background: var(--color-student);  }
+.progress-fill-success  { background: var(--color-success);  }
+.progress-fill-warning  { background: var(--color-warning);  }
+.progress-fill-critical { background: var(--color-critical); }
+
+/* Compact (battery / HUD) */
+.progress-track-sm {
+  height: 5px;
+}
+
+
+/* ------------------------------------------------------------
+   5. INPUT FIELDS
+   Text input, select dropdown.
+   ------------------------------------------------------------ */
+.input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+}
+
+.input-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.input {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: 0 var(--sp4);
+  height: 44px;
+  width: 100%;
+  transition: border-color var(--dur-fast) var(--ease-out);
+  appearance: none;
+}
+
+.input:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.input:focus {
+  outline: 3px solid var(--color-student);
+  outline-offset: 2px;
+  border-color: var(--color-student);
+}
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Error state */
+.input-error .input {
+  border-color: var(--color-critical);
+}
+.input-error-msg {
+  font-size: var(--text-xs);
+  color: var(--color-critical);
+  display: flex;
+  align-items: center;
+  gap: var(--sp1);
+}
+
+
+/* ------------------------------------------------------------
+   6. TOGGLE SWITCH
+   Used for: lock instructions, schedule off-peak,
+   solo/group toggle in session entry.
+   ------------------------------------------------------------ */
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp3);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--color-border-strong);
+  border-radius: 12px;
+  transition: background var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.toggle-track input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  margin: 0;
+  z-index: 1;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.toggle-track:has(input:checked) {
+  background: var(--color-text-primary);
+}
+
+.toggle-track:has(input:checked) .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.toggle-track:focus-within {
+  outline: 3px solid var(--color-student);
+  outline-offset: 3px;
+}
+
+.toggle-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+
+/* ------------------------------------------------------------
+   7. NOTIFICATION TOAST
+   Appears on: submission sync, module assign, update push.
+   Auto-dismiss after 4s in implementation.
+   ------------------------------------------------------------ */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp3);
+  font-size: var(--text-sm);
+  padding: var(--sp3) var(--sp4);
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.toast-success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.toast-error {
+  background: var(--color-critical-bg);
+  border-color: var(--color-critical);
+  color: var(--color-critical);
+}
+
+.toast-info {
+  background: var(--color-info-bg);
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.toast-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.toast-msg {
+  flex: 1;
+  font-weight: 500;
+}
+
+
+/* ------------------------------------------------------------
+   8. MODAL / CONFIRMATION DIALOG
+   Required for: LC-06 Join Simulation (irreversible action).
+   Always includes: title, description, cancel, confirm.
+   ------------------------------------------------------------ */
+.modal-backdrop {
+  min-height: 220px;
+  background: rgba(26,26,24,0.45);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp5);
+}
+
+.modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--sp6);
+  max-width: 420px;
+  width: 100%;
+}
+
+.modal-title {
+  font-size: var(--text-md);
+  font-weight: 500;
+  margin-bottom: var(--sp3);
+}
+
+.modal-body {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--sp6);
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--sp3);
+  justify-content: flex-end;
+}
+
+
+/* ------------------------------------------------------------
+   9. NAV BAR
+   Role-specific top navigation. Accent colour changes per role.
+   ------------------------------------------------------------ */
+.navbar {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--sp6);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--sp5);
+}
+
+.navbar-brand {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+  margin-right: var(--sp4);
+}
+
+.navbar-role-pill {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: var(--sp1) var(--sp3);
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}
+
+.navbar-links {
+  display: flex;
+  gap: var(--sp1);
+  flex: 1;
+}
+
+.navbar-link {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--sp2) var(--sp3);
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast), color var(--dur-fast);
+  letter-spacing: 0.02em;
+}
+
+.navbar-link:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.navbar-link.active {
+  color: var(--color-text-primary);
+  background: var(--color-surface-raised);
+  font-weight: 500;
+}
+
+/* Role-specific active accent underline */
+.navbar-student  .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-student);  }
+.navbar-lecturer .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-lecturer); }
+.navbar-admin    .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-admin);    }
+
+.navbar-user {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+
+/* ------------------------------------------------------------
+   10. LIVE DATA ROW (IoT)
+   Used in: AD-03 Diagnostics Panel.
+   Shows live status with timestamp -- never static.
+   ------------------------------------------------------------ */
+.live-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp4);
+  padding: var(--sp3) var(--sp4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.live-row:last-child {
+  border-bottom: none;
+}
+
+.live-row:hover {
+  background: var(--color-surface-raised);
+  cursor: pointer;
+}
+
+.live-row-id {
+  font-weight: 500;
+  width: 72px;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.live-row-student {
+  flex: 1;
+  color: var(--color-text-secondary);
+  min-width: 120px;
+}
+
+.live-row-battery {
+  display: flex;
+  align-items: center;
+  gap: var(--sp2);
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.live-row-battery .progress-track {
+  flex: 1;
+}
+
+.live-row-battery .pct {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  width: 30px;
+  text-align: right;
+}
+
+.live-timestamp {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* Pulsing live indicator dot */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}
+
+
+/* ------------------------------------------------------------
+   11. HUD PANEL (VR In-Session)
+   Used in: ST-05 In-Session HUD.
+   Semi-transparent overlay panels anchored to viewport edges.
+   ------------------------------------------------------------ */
+.hud-panel {
+  background: rgba(26, 26, 24, 0.82);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-lg);
+  padding: var(--sp4);
+  color: #F8F8F6;
+  font-size: var(--text-sm);
+  backdrop-filter: blur(4px); /* visual reference only -- remove if not supported */
+}
+
+.hud-panel-title {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: var(--sp3);
+  text-transform: uppercase;
+}
+
+.hud-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+}
+
+.hud-progress .progress-track {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.hud-progress .progress-fill {
+  background: #FFFFFF;
+}
+
+.hud-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp1);
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+  margin-top: var(--sp2);
+}
+
+/* ------------------------------------------------------------
+   12. STAT TILE
+   Used in: AD-01 Admin Dashboard, LC-01 Lecturer Dashboard.
+   Big number + label. Accent top border for role/status context.
+   ------------------------------------------------------------ */
+.stat-tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+  min-width: 140px;
+}
+.stat-tile-value {
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+.stat-tile-label {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.stat-tile-student  { border-top: 3px solid var(--color-student);  }
+.stat-tile-lecturer { border-top: 3px solid var(--color-lecturer); }
+.stat-tile-admin    { border-top: 3px solid var(--color-admin);    }
+.stat-tile-critical { border-top: 3px solid var(--color-critical); }
+.stat-tile-success  { border-top: 3px solid var(--color-success);  }
+.stat-tile-warning  { border-top: 3px solid var(--color-warning);  }
+
+/* ------------------------------------------------------------
+   13. STUDENT TILE (Live Monitor)
+   Used in: LC-05 Live Monitor View.
+   Colour-coded left border by status. Contains name, progress,
+   step count, and action buttons.
+   ------------------------------------------------------------ */
+.student-tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp3);
+  min-width: 200px;
+  transition: border-color var(--dur-fast);
+}
+.student-tile-on-track { border-left-color: var(--color-success);  }
+.student-tile-stalled  { border-left-color: var(--color-warning);  }
+.student-tile-flagged  { border-left-color: var(--color-critical); }
+.student-tile-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp2);
+}
+.student-tile-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+.student-tile-meta {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+.student-tile-actions {
+  display: flex;
+  gap: var(--sp2);
+}
+
+/* ------------------------------------------------------------
+   14. DIFFICULTY SLIDER
+   Used in: LC-04 Module Manager.
+   Labelled range input. Left = Practice, Right = Assessment.
+   ------------------------------------------------------------ */
+.slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+}
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  letter-spacing: 0.03em;
+}
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border-strong);
+  outline: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  cursor: pointer;
+  transition: background var(--dur-fast);
+}
+.slider::-webkit-slider-thumb:hover { background: var(--color-text-secondary); }
+.slider:focus-visible {
+  outline: 3px solid var(--color-lecturer);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.slider-value-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------
+   15. FILTER / TAB BAR
+   Used in: LC-02 Student List, AD-03 Diagnostics, AD-02 Priority Issues.
+   Pill-style filter tabs. Active state uses role accent colour.
+   ------------------------------------------------------------ */
+.filter-bar {
+  display: flex;
+  gap: var(--sp1);
+  background: var(--color-surface-raised);
+  padding: var(--sp1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  width: fit-content;
+}
+.filter-tab {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: var(--sp2) var(--sp3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+  white-space: nowrap;
+}
+.filter-tab:hover {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+.filter-tab.active {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.filter-bar-student  .filter-tab.active { color: var(--color-student);  }
+.filter-bar-lecturer .filter-tab.active { color: var(--color-lecturer); }
+.filter-bar-admin    .filter-tab.active { color: var(--color-admin);    }
+
+/* ------------------------------------------------------------
+   16. SYSTEM STATUS BANNER
+   Used in: AD-01 Admin Dashboard.
+   Full-width top banner. Always icon + label + timestamp.
+   Never colour alone.
+   ------------------------------------------------------------ */
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp3);
+  padding: var(--sp3) var(--sp5);
+  border-radius: var(--radius-md);
+  font-family: var(--font-retina);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  width: 100%;
+}
+.status-banner-icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-banner-text { flex: 1; }
+.status-banner-time {
+  font-size: var(--text-xs);
+  opacity: 0.7;
+}
+.status-banner-ok   { background: var(--color-success-bg);  color: var(--color-success);  border: 1px solid var(--color-success);  }
+.status-banner-warn { background: var(--color-warning-bg);  color: var(--color-warning);  border: 1px solid var(--color-warning);  }
+.status-banner-crit { background: var(--color-critical-bg); color: var(--color-critical); border: 1px solid var(--color-critical); }
+.status-banner-ok   .status-banner-icon { background: var(--color-success);  }
+.status-banner-warn .status-banner-icon { background: var(--color-warning);  }
+.status-banner-crit .status-banner-icon { background: var(--color-critical); }
+
+/* ------------------------------------------------------------
+   17. COLLAB PEER AVATAR ROW
+   Used in: ST-05 HUD collab panel.
+   Avatar initials with presence dot and audio indicator.
+   ------------------------------------------------------------ */
+.peer-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+}
+.peer-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp3);
+}
+.peer-avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.peer-avatar-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+}
+.peer-avatar-dot-active  { background: var(--color-success); }
+.peer-avatar-dot-muted   { background: var(--color-warning); }
+.peer-avatar-dot-offline { background: var(--color-border-strong); }
+.peer-info { display: flex; flex-direction: column; gap: 2px; }
+.peer-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.peer-status {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+.peer-audio {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.peer-audio-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-success);
+  animation: audio-pulse 0.8s ease-in-out infinite alternate;
+}
+@keyframes audio-pulse {
+  from { opacity: 0.3; }
+  to   { opacity: 1;   }
+}
+.peer-audio-bar:nth-child(1) { height: 8px;  animation-delay: 0s;    }
+.peer-audio-bar:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+.peer-audio-bar:nth-child(3) { height: 10px; animation-delay: 0.3s;  }
+@media (prefers-reduced-motion: reduce) {
+  .peer-audio-bar { animation: none; opacity: 1; }
+}
+
+/* ------------------------------------------------------------
+   18. FEEDBACK PANEL
+   Used in: ST-06 Post-Module Feedback, LC-07 Performance Report.
+   Two-column layout: automated feedback left, lecturer notes right.
+   ------------------------------------------------------------ */
+.feedback-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp5);
+}
+.feedback-col { display: flex; flex-direction: column; gap: var(--sp3); }
+.feedback-col-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp2);
+  padding-bottom: var(--sp2);
+  border-bottom: 1px solid var(--color-border);
+}
+.feedback-col-title {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.feedback-item {
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--sp3) var(--sp4);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  border-left: 3px solid var(--color-border);
+}
+.feedback-item-missed   { border-left-color: var(--color-warning); }
+.feedback-item-positive { border-left-color: var(--color-success); }
+.feedback-empty {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  font-style: oblique;
+  padding: var(--sp3) 0;
+}
+.feedback-score {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--sp4);
+}
+.feedback-score span {
+  font-size: var(--text-base);
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------
+   19. LOGIN SCREEN
+   Used in: S-01 (shared entry point).
+   Centred form. Role detected from credentials automatically,
+   no manual role selection shown to user.
+   ------------------------------------------------------------ */
+.login-screen {
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--sp7);
+}
+.login-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp7);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp5);
+}
+.login-logo {
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+.login-tagline {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  letter-spacing: 0.04em;
+  margin-top: calc(-1 * var(--sp3));
+}
+.login-fields { display: flex; flex-direction: column; gap: var(--sp4); }
+.login-footer {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------
+   20. HEADSET STATUS INDICATOR
+   Used in: ST-01 Student Dashboard (top right).
+   Compact device status block: battery, connection, calibration.
+   ------------------------------------------------------------ */
+.headset-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp2);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp3) var(--sp4);
+  min-width: 200px;
+}
+.headset-status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.headset-status-title {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.headset-status-rows { display: flex; flex-direction: column; gap: var(--sp2); }
+.headset-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+.headset-status-row-label {
+  font-family: var(--font-retina);
+  letter-spacing: 0.03em;
+}
+.headset-status-row-value {
+  display: flex;
+  align-items: center;
+  gap: var(--sp2);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+</style>
+</head>
+<body>
+
+<div style="display:flex;justify-content:flex-end;margin-bottom:var(--sp5);">
+  <button
+    id="theme-toggle"
+    onclick="toggleTheme()"
+    style="
+      font-family: var(--font-retina);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      background: var(--color-surface);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border-strong);
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 150ms, color 150ms, border-color 150ms;
+    "
+    aria-label="Toggle dark mode"
+  ><span id="theme-label">Dark mode</span></button>
+</div>
+
+<p class="doc-title">NTS Component Library</p>
+<p class="doc-sub">Group 27 | TX-02 (Berkeley Mono) | WCAG 2.1 AAA | 8px grid</p>
+
+
+<!-- ============================================================
+     1. BUTTONS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">01 -- Buttons</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Primary</span>
+      <button class="btn btn-primary">Confirm</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Secondary</span>
+      <button class="btn btn-secondary">Cancel</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Destructive</span>
+      <button class="btn btn-destructive">Delete</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Disabled</span>
+      <button class="btn btn-primary" disabled>Start Module</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Small</span>
+      <button class="btn btn-secondary btn-sm">View logs</button>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Student accent</span>
+      <button class="btn btn-student">Download Module</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Lecturer accent</span>
+      <button class="btn btn-lecturer">Assign Module</button>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Admin accent</span>
+      <button class="btn btn-admin">Push Update</button>
+    </div>
+  </div>
+
+  <pre>/* Copy-paste button */
+&lt;button class="btn btn-primary"&gt;Confirm&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Cancel&lt;/button&gt;
+&lt;button class="btn btn-destructive"&gt;Delete&lt;/button&gt;
+&lt;button class="btn btn-primary" disabled&gt;Disabled&lt;/button&gt;
+&lt;button class="btn btn-student"&gt;Download Module&lt;/button&gt;
+&lt;button class="btn btn-lecturer"&gt;Assign Module&lt;/button&gt;
+&lt;button class="btn btn-admin"&gt;Push Update&lt;/button&gt;
+&lt;button class="btn btn-sm btn-secondary"&gt;Small&lt;/button&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     2. BADGES
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">02 -- Badges &amp; Status Tags</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Healthy</span>
+      <span class="badge badge-success">
+        <span class="status-dot dot-success"></span>Healthy
+      </span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Warning</span>
+      <span class="badge badge-warning">
+        <span class="status-dot dot-warning"></span>Warning
+      </span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Critical</span>
+      <span class="badge badge-critical">
+        <span class="status-dot dot-critical"></span>Critical
+      </span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Info</span>
+      <span class="badge badge-info">
+        <span class="status-dot" style="background:var(--color-info)"></span>Info
+      </span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Neutral</span>
+      <span class="badge badge-neutral">
+        <span class="status-dot dot-neutral"></span>Offline
+      </span>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Student</span>
+      <span class="badge badge-student">Remote</span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Lecturer</span>
+      <span class="badge badge-lecturer">On-campus</span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Admin</span>
+      <span class="badge badge-admin">Admin</span>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Offline available</span>
+      <span class="badge badge-success">Available offline</span>
+    </div>
+  </div>
+
+  <pre>/* Status badge -- always colour + dot + label */
+&lt;span class="badge badge-success"&gt;
+  &lt;span class="status-dot dot-success"&gt;&lt;/span&gt;Healthy
+&lt;/span&gt;
+
+&lt;span class="badge badge-warning"&gt;
+  &lt;span class="status-dot dot-warning"&gt;&lt;/span&gt;Warning
+&lt;/span&gt;
+
+&lt;span class="badge badge-critical"&gt;
+  &lt;span class="status-dot dot-critical"&gt;&lt;/span&gt;Critical
+&lt;/span&gt;
+
+/* Role / context badges */
+&lt;span class="badge badge-student"&gt;Remote&lt;/span&gt;
+&lt;span class="badge badge-lecturer"&gt;On-campus&lt;/span&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     3. CARDS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">03 -- Cards</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:320px;">
+      <span class="component-label">Default card</span>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Patient Assessment -- Ward 3</div>
+            <div class="card-subtitle">Due 05 May 2026</div>
+          </div>
+          <span class="badge badge-warning"><span class="status-dot dot-warning"></span>In progress</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label-row">
+            <span>Progress</span><span>60%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill progress-fill-student" style="width:60%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block" style="width:320px;">
+      <span class="component-label">Alert card (critical)</span>
+      <div class="card card-alert">
+        <div class="card-header">
+          <div>
+            <div class="card-title">HMD-009 -- Firmware outdated</div>
+            <div class="card-subtitle">Sarah Smith · Remote</div>
+          </div>
+          <span class="badge badge-critical"><span class="status-dot dot-critical"></span>Critical</span>
+        </div>
+        <div style="display:flex;gap:var(--sp2);margin-top:var(--sp3);">
+          <button class="btn btn-admin btn-sm">Push update</button>
+          <button class="btn btn-secondary btn-sm">Notify student</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>/* Default card */
+&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;
+    &lt;div&gt;
+      &lt;div class="card-title"&gt;Card title&lt;/div&gt;
+      &lt;div class="card-subtitle"&gt;Subtitle&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;span class="badge badge-warning"&gt;...&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;!-- content --&gt;
+&lt;/div&gt;
+
+/* Alert card -- critical left border */
+&lt;div class="card card-alert"&gt;...&lt;/div&gt;
+
+/* Alert card -- warning left border */
+&lt;div class="card card-alert-warning"&gt;...&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     4. PROGRESS BARS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">04 -- Progress Bars</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:280px;">
+      <span class="component-label">Module progress (student)</span>
+      <div class="progress-wrap">
+        <div class="progress-label-row"><span>Step 3 of 5</span><span>60%</span></div>
+        <div class="progress-track">
+          <div class="progress-fill progress-fill-student" style="width:60%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block" style="width:180px;">
+      <span class="component-label">Battery (warning)</span>
+      <div class="progress-wrap">
+        <div class="progress-label-row"><span>Battery</span><span>22%</span></div>
+        <div class="progress-track progress-track-sm">
+          <div class="progress-fill progress-fill-warning" style="width:22%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block" style="width:180px;">
+      <span class="component-label">Download progress</span>
+      <div class="progress-wrap">
+        <div class="progress-label-row"><span>Downloading…</span><span>67%</span></div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:67%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block" style="width:180px;">
+      <span class="component-label">Complete</span>
+      <div class="progress-wrap">
+        <div class="progress-label-row"><span>Available offline</span><span>100%</span></div>
+        <div class="progress-track">
+          <div class="progress-fill progress-fill-success" style="width:100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>/* Progress bar */
+&lt;div class="progress-wrap"&gt;
+  &lt;div class="progress-label-row"&gt;
+    &lt;span&gt;Step 3 of 5&lt;/span&gt;&lt;span&gt;60%&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="progress-track"&gt;
+    &lt;div class="progress-fill progress-fill-student" style="width:60%"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+/* Compact (battery) */
+&lt;div class="progress-track progress-track-sm"&gt;
+  &lt;div class="progress-fill progress-fill-warning" style="width:22%"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+/* Fill variants: progress-fill-student | -success | -warning | -critical */</pre>
+</div>
+
+
+<!-- ============================================================
+     5. INPUTS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">05 -- Input Fields</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:280px;">
+      <span class="component-label">Default</span>
+      <div class="input-wrap">
+        <label class="input-label">Student name</label>
+        <input class="input" type="text" placeholder="Search students…">
+      </div>
+    </div>
+    <div class="component-block" style="width:280px;">
+      <span class="component-label">Select / dropdown</span>
+      <div class="input-wrap">
+        <label class="input-label">Difficulty</label>
+        <select class="input">
+          <option>Practice mode</option>
+          <option>Assessment mode</option>
+        </select>
+      </div>
+    </div>
+    <div class="component-block" style="width:280px;">
+      <span class="component-label">Error state</span>
+      <div class="input-wrap input-error">
+        <label class="input-label">Deadline</label>
+        <input class="input" type="text" value="32/13/2026">
+        <span class="input-error-msg">Invalid date format</span>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="input-wrap"&gt;
+  &lt;label class="input-label"&gt;Label&lt;/label&gt;
+  &lt;input class="input" type="text" placeholder="Placeholder…"&gt;
+&lt;/div&gt;
+
+/* Error state -- add class to wrap */
+&lt;div class="input-wrap input-error"&gt;
+  &lt;label class="input-label"&gt;Label&lt;/label&gt;
+  &lt;input class="input" type="text"&gt;
+  &lt;span class="input-error-msg"&gt;Error message&lt;/span&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     6. TOGGLE SWITCH
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">06 -- Toggle Switch</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Off</span>
+      <label class="toggle-wrap">
+        <div class="toggle-track">
+          <input type="checkbox">
+          <span class="toggle-thumb"></span>
+        </div>
+        <span class="toggle-label">Lock instructions</span>
+      </label>
+    </div>
+    <div class="component-block">
+      <span class="component-label">On</span>
+      <label class="toggle-wrap">
+        <div class="toggle-track">
+          <input type="checkbox" checked>
+          <span class="toggle-thumb"></span>
+        </div>
+        <span class="toggle-label">Schedule off-peak</span>
+      </label>
+    </div>
+  </div>
+
+  <pre>&lt;label class="toggle-wrap"&gt;
+  &lt;div class="toggle-track"&gt;
+    &lt;input type="checkbox"&gt;
+    &lt;span class="toggle-thumb"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;span class="toggle-label"&gt;Lock instructions&lt;/span&gt;
+&lt;/label&gt;
+
+/* Checked state -- add checked attribute to input */
+&lt;input type="checkbox" checked&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     7. TOAST NOTIFICATIONS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">07 -- Toast Notifications</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Success</span>
+      <div class="toast toast-success">
+        <span class="toast-msg">Submission synced successfully</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Error</span>
+      <div class="toast toast-error">
+        <span class="toast-msg">Connection lost -- working offline</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Info</span>
+      <div class="toast toast-info">
+        <span class="toast-msg">Module assigned to all students</span>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="toast toast-success"&gt;
+  &lt;span class="toast-msg"&gt;Submission synced&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="toast toast-error"&gt;
+  &lt;span class="toast-msg"&gt;Connection lost&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="toast toast-info"&gt;
+  &lt;span class="toast-msg"&gt;Module assigned&lt;/span&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     8. MODAL / CONFIRMATION DIALOG
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">08 -- Confirmation Modal</p>
+  <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--sp5);">
+    Required for irreversible actions -- e.g. LC-06 Join Simulation.
+  </p>
+
+  <div class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-title">Join student simulation?</div>
+      <div class="modal-body">
+        You are about to enter <strong>Sarah Smith's</strong> active VR session in observer mode.
+        This action will be logged and cannot be undone.
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-lecturer">Confirm -- join session</button>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="modal-backdrop"&gt;
+  &lt;div class="modal"&gt;
+    &lt;div class="modal-title"&gt;Join student simulation?&lt;/div&gt;
+    &lt;div class="modal-body"&gt;
+      Description of irreversible action.
+    &lt;/div&gt;
+    &lt;div class="modal-actions"&gt;
+      &lt;button class="btn btn-secondary"&gt;Cancel&lt;/button&gt;
+      &lt;button class="btn btn-lecturer"&gt;Confirm&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     9. NAV BARS
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">09 -- Navigation Bars</p>
+
+  <div class="component-block" style="margin-bottom:var(--sp5);">
+    <span class="component-label">Student nav</span>
+    <nav class="navbar navbar-student">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-student">Student</span>
+      <div class="navbar-links">
+        <a href="#" class="navbar-link active">Dashboard</a>
+        <a href="#" class="navbar-link">Modules</a>
+        <a href="#" class="navbar-link">Feedback</a>
+      </div>
+      <span class="navbar-user">Sarah Smith</span>
+    </nav>
+  </div>
+
+  <div class="component-block" style="margin-bottom:var(--sp5);">
+    <span class="component-label">Lecturer nav</span>
+    <nav class="navbar navbar-lecturer">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-lecturer">Lecturer</span>
+      <div class="navbar-links">
+        <a href="#" class="navbar-link active">Dashboard</a>
+        <a href="#" class="navbar-link">Students</a>
+        <a href="#" class="navbar-link">Modules</a>
+        <a href="#" class="navbar-link">Monitor</a>
+        <a href="#" class="navbar-link">Reports</a>
+      </div>
+      <span class="navbar-user">Dr M. Brown</span>
+    </nav>
+  </div>
+
+  <div class="component-block">
+    <span class="component-label">Admin nav</span>
+    <nav class="navbar navbar-admin">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-admin">Admin</span>
+      <div class="navbar-links">
+        <a href="#" class="navbar-link active">Dashboard</a>
+        <a href="#" class="navbar-link">Diagnostics</a>
+        <a href="#" class="navbar-link">Firmware</a>
+        <a href="#" class="navbar-link">Loans</a>
+        <a href="#" class="navbar-link">Logs</a>
+      </div>
+      <span class="navbar-user">Ruby Jones</span>
+    </nav>
+  </div>
+
+  <pre>&lt;nav class="navbar navbar-student"&gt;
+  &lt;span class="navbar-brand"&gt;NTS&lt;/span&gt;
+  &lt;span class="badge badge-student"&gt;Student&lt;/span&gt;
+  &lt;div class="navbar-links"&gt;
+    &lt;a href="#" class="navbar-link active"&gt;Dashboard&lt;/a&gt;
+    &lt;a href="#" class="navbar-link"&gt;Modules&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;span class="navbar-user"&gt;Sarah Smith&lt;/span&gt;
+&lt;/nav&gt;
+
+/* Swap navbar-student → navbar-lecturer → navbar-admin */</pre>
+</div>
+
+
+<!-- ============================================================
+     10. LIVE DATA ROW (IoT Diagnostics)
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">10 -- Live Data Row (IoT)</p>
+
+  <div class="card" style="max-width:700px;">
+    <div class="live-row">
+      <span class="live-row-id">HMD-001</span>
+      <span class="live-row-student">Sarah Smith</span>
+      <span class="badge badge-student" style="flex-shrink:0;">Remote</span>
+      <div class="live-row-battery">
+        <div class="progress-track progress-track-sm" style="width:60px;">
+          <div class="progress-fill progress-fill-student" style="width:82%"></div>
+        </div>
+        <span class="pct">82%</span>
+      </div>
+      <span class="badge badge-success"><span class="status-dot dot-success"></span>Healthy</span>
+      <div class="live-dot"></div>
+      <span class="live-timestamp">12s ago</span>
+    </div>
+    <div class="live-row">
+      <span class="live-row-id">HMD-009</span>
+      <span class="live-row-student">James Park</span>
+      <span class="badge badge-student" style="flex-shrink:0;">Remote</span>
+      <div class="live-row-battery">
+        <div class="progress-track progress-track-sm" style="width:60px;">
+          <div class="progress-fill progress-fill-warning" style="width:18%"></div>
+        </div>
+        <span class="pct">18%</span>
+      </div>
+      <span class="badge badge-warning"><span class="status-dot dot-warning"></span>Warning</span>
+      <div class="live-dot" style="background:var(--color-warning)"></div>
+      <span class="live-timestamp">8s ago</span>
+    </div>
+    <div class="live-row">
+      <span class="live-row-id">HMD-014</span>
+      <span class="live-row-student">Mei Chen</span>
+      <span class="badge badge-lecturer" style="flex-shrink:0;">On-campus</span>
+      <div class="live-row-battery">
+        <div class="progress-track progress-track-sm" style="width:60px;">
+          <div class="progress-fill progress-fill-critical" style="width:6%"></div>
+        </div>
+        <span class="pct">6%</span>
+      </div>
+      <span class="badge badge-critical"><span class="status-dot dot-critical"></span>Critical</span>
+      <div class="live-dot" style="background:var(--color-critical)"></div>
+      <span class="live-timestamp">3s ago</span>
+    </div>
+  </div>
+
+  <pre>&lt;div class="live-row"&gt;
+  &lt;span class="live-row-id"&gt;HMD-001&lt;/span&gt;
+  &lt;span class="live-row-student"&gt;Sarah Smith&lt;/span&gt;
+  &lt;span class="badge badge-student"&gt;Remote&lt;/span&gt;
+  &lt;div class="live-row-battery"&gt;
+    &lt;div class="progress-track progress-track-sm"&gt;
+      &lt;div class="progress-fill progress-fill-student" style="width:82%"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;span class="pct"&gt;82%&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;span class="badge badge-success"&gt;
+    &lt;span class="status-dot dot-success"&gt;&lt;/span&gt;Healthy
+  &lt;/span&gt;
+  &lt;div class="live-dot"&gt;&lt;/div&gt;
+  &lt;span class="live-timestamp"&gt;12s ago&lt;/span&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     11. HUD PANEL (VR)
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">11 -- HUD Panel (VR In-Session)</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:220px;background:#2a2a28;padding:var(--sp5);border-radius:var(--radius-lg);">
+      <span class="component-label" style="color:#888;">Progress panel</span>
+      <div class="hud-panel" style="margin-top:var(--sp3);">
+        <div class="hud-panel-title">Progress</div>
+        <div class="hud-progress">
+          <div class="progress-label-row" style="color:rgba(255,255,255,0.7);">
+            <span>Step 3 of 5</span><span>60%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:60%;background:#fff;"></div>
+          </div>
+        </div>
+        <div class="hud-lock-badge">Assessment mode -- instructions locked</div>
+      </div>
+    </div>
+
+    <div class="component-block" style="width:220px;background:#2a2a28;padding:var(--sp5);border-radius:var(--radius-lg);">
+      <span class="component-label" style="color:#888;">Collab panel</span>
+      <div class="hud-panel" style="margin-top:var(--sp3);">
+        <div class="hud-panel-title">Collaboration</div>
+        <div style="display:flex;flex-direction:column;gap:var(--sp2);">
+          <div style="display:flex;align-items:center;gap:var(--sp2);font-size:var(--text-sm);color:#F8F8F6;">
+            <div class="live-dot"></div>
+            <span>J. Martinez (on-campus)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--sp2);font-size:var(--text-sm);color:rgba(255,255,255,0.5);">
+            <div class="live-dot" style="background:rgba(255,255,255,0.3);animation:none;"></div>
+            <span>K. Obi (connecting…)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>/* HUD panel -- dark overlay, placed on VR viewport edges */
+&lt;div class="hud-panel"&gt;
+  &lt;div class="hud-panel-title"&gt;Progress&lt;/div&gt;
+  &lt;div class="hud-progress"&gt;
+    &lt;div class="progress-label-row"&gt;
+      &lt;span&gt;Step 3 of 5&lt;/span&gt;&lt;span&gt;60%&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="progress-track"&gt;
+      &lt;div class="progress-fill" style="width:60%"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="hud-lock-badge"&gt;Assessment mode -- instructions locked&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+
+
+<!-- ============================================================
+     12. STAT TILES
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">12 -- Stat Tiles</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">On-campus (lecturer)</span>
+      <div class="stat-tile stat-tile-lecturer">
+        <div class="stat-tile-value">14</div>
+        <div class="stat-tile-label">On-campus</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Remote (student)</span>
+      <div class="stat-tile stat-tile-student">
+        <div class="stat-tile-value">8</div>
+        <div class="stat-tile-label">Remote</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Priority alerts (critical)</span>
+      <div class="stat-tile stat-tile-critical">
+        <div class="stat-tile-value" style="color:var(--color-critical);">2</div>
+        <div class="stat-tile-label">Priority alerts</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Headsets online (success)</span>
+      <div class="stat-tile stat-tile-success">
+        <div class="stat-tile-value">20</div>
+        <div class="stat-tile-label">Headsets online</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Active sessions (admin)</span>
+      <div class="stat-tile stat-tile-admin">
+        <div class="stat-tile-value">3</div>
+        <div class="stat-tile-label">Active sessions</div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="stat-tile stat-tile-lecturer"&gt;
+  &lt;div class="stat-tile-value"&gt;14&lt;/div&gt;
+  &lt;div class="stat-tile-label"&gt;On-campus&lt;/div&gt;
+&lt;/div&gt;
+
+/* Top border variants:
+   stat-tile-student | stat-tile-lecturer | stat-tile-admin
+   stat-tile-critical | stat-tile-warning | stat-tile-success */</pre>
+</div>
+
+
+<!-- ============================================================
+     13. STUDENT TILES (Live Monitor)
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">13 -- Student Tiles (Live Monitor)</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:220px;">
+      <span class="component-label">On track</span>
+      <div class="student-tile student-tile-on-track">
+        <div class="student-tile-header">
+          <div>
+            <div class="student-tile-name">Sarah Smith</div>
+            <div class="student-tile-meta">Remote · Step 3 of 5</div>
+          </div>
+          <span class="badge badge-success"><span class="status-dot dot-success"></span>On track</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill progress-fill-success" style="width:60%"></div></div>
+        </div>
+        <div class="student-tile-actions">
+          <button class="btn btn-secondary btn-sm">Flag</button>
+          <button class="btn btn-lecturer btn-sm">Join</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block" style="width:220px;">
+      <span class="component-label">Stalled</span>
+      <div class="student-tile student-tile-stalled">
+        <div class="student-tile-header">
+          <div>
+            <div class="student-tile-name">James Park</div>
+            <div class="student-tile-meta">Remote · Step 2 of 5</div>
+          </div>
+          <span class="badge badge-warning"><span class="status-dot dot-warning"></span>Stalled</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill progress-fill-warning" style="width:30%"></div></div>
+        </div>
+        <div class="student-tile-actions">
+          <button class="btn btn-secondary btn-sm">Flag</button>
+          <button class="btn btn-lecturer btn-sm">Join</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block" style="width:220px;">
+      <span class="component-label">Flagged</span>
+      <div class="student-tile student-tile-flagged">
+        <div class="student-tile-header">
+          <div>
+            <div class="student-tile-name">Mei Chen</div>
+            <div class="student-tile-meta">On-campus · Step 1 of 5</div>
+          </div>
+          <span class="badge badge-critical"><span class="status-dot dot-critical"></span>Flagged</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill progress-fill-critical" style="width:10%"></div></div>
+        </div>
+        <div class="student-tile-actions">
+          <button class="btn btn-secondary btn-sm">Unflag</button>
+          <button class="btn btn-lecturer btn-sm">Join</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="student-tile student-tile-on-track"&gt;
+  &lt;div class="student-tile-header"&gt;
+    &lt;div&gt;
+      &lt;div class="student-tile-name"&gt;Sarah Smith&lt;/div&gt;
+      &lt;div class="student-tile-meta"&gt;Remote · Step 3 of 5&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;span class="badge badge-success"&gt;...&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;!-- progress bar --&gt;
+  &lt;div class="student-tile-actions"&gt;
+    &lt;button class="btn btn-secondary btn-sm"&gt;Flag&lt;/button&gt;
+    &lt;button class="btn btn-lecturer btn-sm"&gt;Join&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+/* Border variants: student-tile-on-track | student-tile-stalled | student-tile-flagged */</pre>
+</div>
+
+
+<!-- ============================================================
+     14. DIFFICULTY SLIDER
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">14 -- Difficulty Slider</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:320px;">
+      <span class="component-label">Module difficulty</span>
+      <div class="slider-wrap">
+        <div class="slider-label-row">
+          <span>Practice mode</span>
+          <span>Assessment mode</span>
+        </div>
+        <input class="slider" type="range" min="0" max="100" value="75"
+               oninput="this.nextElementSibling.textContent = this.value < 50 ? 'Practice mode' : 'Assessment mode'">
+        <div class="slider-value-label">Assessment mode</div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="slider-wrap"&gt;
+  &lt;div class="slider-label-row"&gt;
+    &lt;span&gt;Practice mode&lt;/span&gt;
+    &lt;span&gt;Assessment mode&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;input class="slider" type="range" min="0" max="100" value="75"&gt;
+  &lt;div class="slider-value-label"&gt;Assessment mode&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     15. FILTER / TAB BAR
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">15 -- Filter / Tab Bar</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Student list filters</span>
+      <div class="filter-bar filter-bar-lecturer">
+        <button class="filter-tab active">All</button>
+        <button class="filter-tab">On-campus</button>
+        <button class="filter-tab">Remote</button>
+        <button class="filter-tab">Flagged</button>
+      </div>
+    </div>
+    <div class="component-block">
+      <span class="component-label">Diagnostics filters</span>
+      <div class="filter-bar filter-bar-admin">
+        <button class="filter-tab active">All</button>
+        <button class="filter-tab">Online</button>
+        <button class="filter-tab">Issues</button>
+        <button class="filter-tab">Offline</button>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="filter-bar filter-bar-lecturer"&gt;
+  &lt;button class="filter-tab active"&gt;All&lt;/button&gt;
+  &lt;button class="filter-tab"&gt;On-campus&lt;/button&gt;
+  &lt;button class="filter-tab"&gt;Remote&lt;/button&gt;
+  &lt;button class="filter-tab"&gt;Flagged&lt;/button&gt;
+&lt;/div&gt;
+
+/* Role accent variants: filter-bar-student | filter-bar-lecturer | filter-bar-admin */</pre>
+</div>
+
+
+<!-- ============================================================
+     16. SYSTEM STATUS BANNER
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">16 -- System Status Banner</p>
+
+  <div class="component-block" style="max-width:600px;gap:var(--sp3);display:flex;flex-direction:column;">
+    <span class="component-label">All clear</span>
+    <div class="status-banner status-banner-ok">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">All systems operational -- 22 headsets online</span>
+      <span class="status-banner-time">Updated 4s ago</span>
+    </div>
+
+    <span class="component-label" style="margin-top:var(--sp3);">Issues detected</span>
+    <div class="status-banner status-banner-warn">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">Issues detected -- 2 headsets require attention</span>
+      <span class="status-banner-time">Updated 8s ago</span>
+    </div>
+
+    <span class="component-label" style="margin-top:var(--sp3);">Critical</span>
+    <div class="status-banner status-banner-crit">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">Critical -- assessment at risk, resolve now</span>
+      <span class="status-banner-time">Updated 2s ago</span>
+    </div>
+  </div>
+
+  <pre>&lt;div class="status-banner status-banner-ok"&gt;
+  &lt;div class="status-banner-icon"&gt;&lt;/div&gt;
+  &lt;span class="status-banner-text"&gt;All systems operational&lt;/span&gt;
+  &lt;span class="status-banner-time"&gt;Updated 4s ago&lt;/span&gt;
+&lt;/div&gt;
+
+/* Variants: status-banner-ok | status-banner-warn | status-banner-crit */</pre>
+</div>
+
+
+<!-- ============================================================
+     17. COLLAB PEER AVATAR ROW
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">17 -- Collab Peer Avatar Row</p>
+
+  <div class="component-row">
+    <div class="component-block" style="width:260px;background:#2a2a28;padding:var(--sp5);border-radius:var(--radius-lg);">
+      <span class="component-label" style="color:#888;">In HUD context</span>
+      <div class="hud-panel" style="margin-top:var(--sp3);">
+        <div class="hud-panel-title">Collaboration</div>
+        <div class="peer-row">
+          <div class="peer-item">
+            <div class="peer-avatar" style="background:#2D3A2D;color:#6BBF4E;border-color:#3a4a3a;">JM
+              <div class="peer-avatar-dot peer-avatar-dot-active"></div>
+            </div>
+            <div class="peer-info">
+              <div class="peer-name" style="color:#F0F0EC;">J. Martinez</div>
+              <div class="peer-status">On-campus · active</div>
+            </div>
+            <div class="peer-audio">
+              <div class="peer-audio-bar"></div>
+              <div class="peer-audio-bar"></div>
+              <div class="peer-audio-bar"></div>
+            </div>
+          </div>
+          <div class="peer-item">
+            <div class="peer-avatar" style="background:#2a2a28;color:#686862;border-color:#333;">KO
+              <div class="peer-avatar-dot peer-avatar-dot-muted"></div>
+            </div>
+            <div class="peer-info">
+              <div class="peer-name" style="color:#A8A8A2;">K. Obi</div>
+              <div class="peer-status">Remote · muted</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block" style="width:260px;">
+      <span class="component-label">Light context</span>
+      <div class="card" style="margin-top:var(--sp3);">
+        <div class="peer-row">
+          <div class="peer-item">
+            <div class="peer-avatar">JM
+              <div class="peer-avatar-dot peer-avatar-dot-active"></div>
+            </div>
+            <div class="peer-info">
+              <div class="peer-name">J. Martinez</div>
+              <div class="peer-status">On-campus · active</div>
+            </div>
+            <div class="peer-audio">
+              <div class="peer-audio-bar"></div>
+              <div class="peer-audio-bar"></div>
+              <div class="peer-audio-bar"></div>
+            </div>
+          </div>
+          <div class="peer-item">
+            <div class="peer-avatar">KO
+              <div class="peer-avatar-dot peer-avatar-dot-offline"></div>
+            </div>
+            <div class="peer-info">
+              <div class="peer-name">K. Obi</div>
+              <div class="peer-status">Offline</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="peer-row"&gt;
+  &lt;div class="peer-item"&gt;
+    &lt;div class="peer-avatar"&gt;JM
+      &lt;div class="peer-avatar-dot peer-avatar-dot-active"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="peer-info"&gt;
+      &lt;div class="peer-name"&gt;J. Martinez&lt;/div&gt;
+      &lt;div class="peer-status"&gt;On-campus · active&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="peer-audio"&gt;
+      &lt;div class="peer-audio-bar"&gt;&lt;/div&gt;
+      &lt;div class="peer-audio-bar"&gt;&lt;/div&gt;
+      &lt;div class="peer-audio-bar"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+/* Dot variants: peer-avatar-dot-active | peer-avatar-dot-muted | peer-avatar-dot-offline */</pre>
+</div>
+
+
+<!-- ============================================================
+     18. FEEDBACK PANEL
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">18 -- Feedback Panel</p>
+
+  <div class="component-block" style="max-width:700px;">
+    <span class="component-label">Post-module feedback (ST-06)</span>
+    <div class="card" style="margin-top:var(--sp3);">
+      <div class="feedback-score">72% <span>/ 100 -- Patient Assessment Ward 3</span></div>
+      <div class="feedback-panel">
+        <div class="feedback-col">
+          <div class="feedback-col-header">
+            <span class="feedback-col-title">Automated feedback</span>
+          </div>
+          <div class="feedback-item feedback-item-missed">Missed step: patient ID verification before medication administration.</div>
+          <div class="feedback-item feedback-item-missed">Hand hygiene protocol not initiated on entry.</div>
+          <div class="feedback-item feedback-item-positive">Correct vital signs assessment sequence followed.</div>
+        </div>
+        <div class="feedback-col">
+          <div class="feedback-col-header">
+            <span class="feedback-col-title">Lecturer feedback</span>
+          </div>
+          <div class="feedback-item">Good clinical reasoning on the medication query. Review the pre-administration checklist before your next attempt.</div>
+          <div class="feedback-empty">No further notes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="feedback-panel"&gt;
+  &lt;div class="feedback-col"&gt;
+    &lt;div class="feedback-col-header"&gt;
+      &lt;span class="feedback-col-title"&gt;Automated feedback&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="feedback-item feedback-item-missed"&gt;Missed step: ...&lt;/div&gt;
+    &lt;div class="feedback-item feedback-item-positive"&gt;Correct: ...&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="feedback-col"&gt;
+    &lt;div class="feedback-col-header"&gt;
+      &lt;span class="feedback-col-title"&gt;Lecturer feedback&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="feedback-item"&gt;Note text...&lt;/div&gt;
+    &lt;div class="feedback-empty"&gt;No further notes.&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     19. LOGIN SCREEN
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">19 -- Login Screen</p>
+
+  <div class="login-screen">
+    <div class="login-card">
+      <div>
+        <div class="login-logo">NTS</div>
+        <div class="login-tagline">Nursing Training Simulator</div>
+      </div>
+      <div class="login-fields">
+        <div class="input-wrap">
+          <label class="input-label">University ID</label>
+          <input class="input" type="text" placeholder="e.g. s1234567">
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Password</label>
+          <input class="input" type="password" placeholder="Password">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;">Sign in</button>
+      <div class="login-footer">Role is detected automatically from your credentials.<br>Contact IT support if you cannot access your account.</div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="login-screen"&gt;
+  &lt;div class="login-card"&gt;
+    &lt;div&gt;
+      &lt;div class="login-logo"&gt;NTS&lt;/div&gt;
+      &lt;div class="login-tagline"&gt;Nursing Training Simulator&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="login-fields"&gt;
+      &lt;div class="input-wrap"&gt;
+        &lt;label class="input-label"&gt;University ID&lt;/label&gt;
+        &lt;input class="input" type="text" placeholder="e.g. s1234567"&gt;
+      &lt;/div&gt;
+      &lt;div class="input-wrap"&gt;
+        &lt;label class="input-label"&gt;Password&lt;/label&gt;
+        &lt;input class="input" type="password"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;button class="btn btn-primary" style="width:100%"&gt;Sign in&lt;/button&gt;
+    &lt;div class="login-footer"&gt;Role detected automatically.&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<!-- ============================================================
+     20. HEADSET STATUS INDICATOR
+     ============================================================ -->
+<div class="section">
+  <p class="section-title">20 -- Headset Status Indicator</p>
+
+  <div class="component-row">
+    <div class="component-block">
+      <span class="component-label">Healthy</span>
+      <div class="headset-status">
+        <div class="headset-status-header">
+          <span class="headset-status-title">Headset</span>
+          <span class="badge badge-success"><span class="status-dot dot-success"></span>Ready</span>
+        </div>
+        <div class="headset-status-rows">
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Battery</span>
+            <div class="headset-status-row-value">
+              <div class="progress-track progress-track-sm" style="width:60px;">
+                <div class="progress-fill progress-fill-success" style="width:82%"></div>
+              </div>
+              <span>82%</span>
+            </div>
+          </div>
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Connection</span>
+            <div class="headset-status-row-value">
+              <span class="status-dot dot-success" style="width:7px;height:7px;border-radius:50%;display:inline-block;"></span>
+              <span>Strong</span>
+            </div>
+          </div>
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Calibration</span>
+            <div class="headset-status-row-value">
+              <span class="status-dot dot-success" style="width:7px;height:7px;border-radius:50%;display:inline-block;"></span>
+              <span>Complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block">
+      <span class="component-label">Needs attention</span>
+      <div class="headset-status">
+        <div class="headset-status-header">
+          <span class="headset-status-title">Headset</span>
+          <span class="badge badge-warning"><span class="status-dot dot-warning"></span>Warning</span>
+        </div>
+        <div class="headset-status-rows">
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Battery</span>
+            <div class="headset-status-row-value">
+              <div class="progress-track progress-track-sm" style="width:60px;">
+                <div class="progress-fill progress-fill-warning" style="width:18%"></div>
+              </div>
+              <span style="color:var(--color-warning);">18%</span>
+            </div>
+          </div>
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Connection</span>
+            <div class="headset-status-row-value">
+              <span class="status-dot dot-warning" style="width:7px;height:7px;border-radius:50%;display:inline-block;"></span>
+              <span>Weak</span>
+            </div>
+          </div>
+          <div class="headset-status-row">
+            <span class="headset-status-row-label">Calibration</span>
+            <div class="headset-status-row-value">
+              <span class="status-dot dot-success" style="width:7px;height:7px;border-radius:50%;display:inline-block;"></span>
+              <span>Complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;div class="headset-status"&gt;
+  &lt;div class="headset-status-header"&gt;
+    &lt;span class="headset-status-title"&gt;Headset&lt;/span&gt;
+    &lt;span class="badge badge-success"&gt;...&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="headset-status-rows"&gt;
+    &lt;div class="headset-status-row"&gt;
+      &lt;span class="headset-status-row-label"&gt;Battery&lt;/span&gt;
+      &lt;div class="headset-status-row-value"&gt;
+        &lt;!-- progress-track-sm + fill --&gt;
+        &lt;span&gt;82%&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="headset-status-row"&gt;
+      &lt;span class="headset-status-row-label"&gt;Connection&lt;/span&gt;
+      &lt;div class="headset-status-row-value"&gt;
+        &lt;span class="status-dot dot-success"&gt;&lt;/span&gt;
+        &lt;span&gt;Strong&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+
+
+<script>
+  /* ── Dark / light mode toggle ──────────────────────────────
+     Persists choice to localStorage.
+     Respects OS preference on first load.
+     ---------------------------------------------------------- */
+  const root  = document.documentElement;
+  const label = document.getElementById('theme-label');
+
+  function applyTheme(dark) {
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    label.textContent = dark ? 'Light mode' : 'Dark mode';
+    localStorage.setItem('nts-theme', dark ? 'dark' : 'light');
+  }
+
+  function toggleTheme() {
+    applyTheme(root.getAttribute('data-theme') !== 'dark');
+  }
+
+  /* On load: stored preference → OS preference → light */
+  const saved = localStorage.getItem('nts-theme');
+  if (saved) {
+    applyTheme(saved === 'dark');
+  } else {
+    applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+</script>
+
+</body>
+</html>
