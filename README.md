@@ -9,10 +9,10 @@ Greetings. Everything's in here. Don't skip the comments in the HTML — that's 
 ```
 DHCI-Resources/
 ├── Wireframes/
-│   ├── nts_wireframes_sarah.html     Sarah Smith — Student screens (WP2)
-│   ├── nts_wireframes_brown.html     Dr Michael Brown — Lecturer screens (WP3)
-│   ├── nts_wireframes_ruby.html      Ruby Jones — Admin screens (WP4)
-│   └── fonts/                        TX-02 (Berkeley Mono) — full family
+│   ├── nts_wireframes_sarah.html     Sarah Smith — Student screens
+│   ├── nts_wireframes_brown.html     Dr Michael Brown — Lecturer screens
+│   ├── nts_wireframes_ruby.html      Ruby Jones — Admin screens
+│   └── fonts/                        TX-02 (Berkeley Mono) — full family (i'm violating my license by sharing this, but this font rocks so idgaf)
 ├── Spec-Documents/
 │   ├── nts_component_library.html    Every component, rendered and annotated
 │   ├── nts_design_reference.html     Tokens, spacing grid, colour system, screen anatomy
