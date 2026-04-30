@@ -4,7 +4,7 @@ Greetings. Everything's in here. Don't skip the comments in the HTML — that's 
 
 ---
 
-## Structure
+## Files & Structure
 
 ```
 DHCI-Resources/
@@ -22,23 +22,6 @@ DHCI-Resources/
     ├── nts.js                        Shared JS
     └── nts_snippets.html             Hi-fi component snippets
 ```
-
----
-
-## Files
-
-| File | What |
-|---|---|
-| `Wireframes/nts_wireframes_sarah.html` | Sarah Smith — Student screens (WP2) |
-| `Wireframes/nts_wireframes_brown.html` | Dr Michael Brown — Lecturer screens (WP3) |
-| `Wireframes/nts_wireframes_ruby.html` | Ruby Jones — Admin screens (WP4) |
-| `Spec-Documents/nts_component_library.html` | Every component, rendered and annotated |
-| `Spec-Documents/nts_design_reference.html` | Tokens, spacing grid, colour system, screen anatomy |
-| `Wireframes/fonts/` | TX-02 (Berkeley Mono) — full family |
-| `Spec-Documents/fonts/` | TX-02 (Berkeley Mono) — full family |
-| `HI-Fi Resources/styles.css` | Shared stylesheet |
-| `HI-Fi Resources/nts.js` | Shared JS |
-| `HI-Fi Resources/nts_snippets.html` | Hi-fi component snippets |
 
 Just open the HTML files in a browser. No build step.
 
