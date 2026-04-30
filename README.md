@@ -29,7 +29,7 @@ Just open the HTML files in a browser. No build step.
 
 ## Hi-Fi Resources
 
-These three files are everything needed to build the hi-fi prototype. Don't rewrite any of it — just use it. Unless you want to fuck with idk, i'm not your dad. Can't tell you what to do.
+These three files are everything needed to build the hi-fi prototype. Don't rewrite any of it — just use it. Unless you want to fuck with it, idk i'm not your dad. I Can't tell you what to do.
 
 - **`styles.css`** — full design system as a single stylesheet. Link it and all tokens, components, dark mode, and typography rules are available. Every colour pairing in it is WCAG 2.1 AAA-verified. Don't introduce arbitrary hex values; use the tokens.
 - **`nts.js`** — minimal behaviour shim. Handles three things: dark mode toggle (persists to `localStorage`), toast auto-dismiss after 4s, and modal focus trap. Everything else in the design is CSS-only. Defer it.
