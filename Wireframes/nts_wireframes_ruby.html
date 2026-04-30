@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTS Wireframes -- Ruby Jones (Admin)</title>
+
+<!-- TX-02 FONT STACK (Berkeley Mono) -- Regular/Medium/Bold for body,
+     Retina for 11px and below, Condensed for VR HUD, SemiCondensed for
+     the IoT data tables. Note: no Oblique variant here; Ruby's screens
+     don't use oblique anywhere. MONIL: still load all variants anyway --
+     the data tables NEED SemiCondensed or the rows won't fit. -->
+<style>
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Medium.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Bold.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-Retina'; src:url('fonts/TX-02-Retina.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-Condensed'; src:url('fonts/TX-02-Condensed.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-SemiCondensed'; src:url('fonts/TX-02-SemiCondensed.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+</style>
+
+<style>
+/* ============================================================
+   DESIGN TOKENS -- keep in sync with nts_component_library.html.
+   Admin accent is --color-admin / --color-admin-bg (#A82020, red).
+   This is the most critical-looking role colour in the system,
+   which is entirely on purpose. Ruby deals with actual system failures.
+   MONIL: --color-admin is NOT the same as --color-critical. Admin
+   is a role colour; critical is a severity colour. Don't conflate them.
+   ============================================================ */
+:root {
+  --font:           'TX-02', 'Courier New', monospace;
+  --font-retina:    'TX-02-Retina', 'TX-02', 'Courier New', monospace;
+  --font-condensed: 'TX-02-Condensed', 'TX-02', 'Courier New', monospace;
+  --font-data:      'TX-02-SemiCondensed', 'TX-02', 'Courier New', monospace;
+  --text-xs: 11px; --text-sm: 13px; --text-base: 15px;
+  --text-md: 17px; --text-lg: 21px; --text-xl: 27px; --text-2xl: 35px;
+  --sp1: 4px; --sp2: 8px; --sp3: 12px; --sp4: 16px;
+  --sp5: 24px; --sp6: 32px; --sp7: 48px; --sp8: 64px;
+
+  --color-bg: #F8F8F6; --color-surface: #FFFFFF; --color-surface-raised: #F2F2EF;
+  --color-border: #DDDDD8; --color-border-strong: #AAAAAA;
+  --color-text-primary: #1A1A18; --color-text-secondary: #5A5A56; --color-text-tertiary: #8A8A84;
+
+  --color-student:  #1A5FA8; --color-student-bg:  #EBF3FC;
+  --color-lecturer: #2D6B1F; --color-lecturer-bg: #EBF5E4;
+  --color-admin:    #A82020; --color-admin-bg:    #FCEBEB;
+
+  --color-success:  #1E7A3E; --color-success-bg:  #E8F5EE;
+  --color-warning:  #A85C00; --color-warning-bg:  #FEF3E2;
+  --color-critical: #A81A1A; --color-critical-bg: #FCEBEB;
+  --color-info:     #1A5FA8; --color-info-bg:     #EBF3FC;
+
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px;
+}
+[data-theme="dark"] {
+  --color-bg: #141412; --color-surface: #1E1E1C; --color-surface-raised: #272724;
+  --color-border: #333330; --color-border-strong: #4A4A46;
+  --color-text-primary: #F0F0EC; --color-text-secondary: #A8A8A2; --color-text-tertiary: #686862;
+  --color-student: #5B9FE0; --color-student-bg: #1A2E42;
+  --color-lecturer: #6BBF4E; --color-lecturer-bg: #1A2E1A;
+  --color-admin: #E05555; --color-admin-bg: #2A1010;
+  --color-success: #4BBF74; --color-success-bg: #132A1E;
+  --color-warning: #E09040; --color-warning-bg: #2A1E0A;
+  --color-critical: #E05555; --color-critical-bg: #2A1010;
+  --color-info: #5B9FE0; --color-info-bg: #1A2E42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); font-size: var(--text-base); background: var(--color-bg); color: var(--color-text-primary); line-height: 1.5; }
+.live-timestamp, .badge, .navbar-role-pill { font-family: var(--font-retina); }
+
+/* ============================================================
+   COMPONENTS -- subset of the full library, scoped to AD-01..AD-10.
+   Grab anything missing from nts_component_library.html, don't invent it.
+   MONIL: btn-destructive is new here. It's for irreversible hardware
+   actions (force-restart, factory reset). Red background, requires
+   confirmation dialog. Do not use it for routine admin actions.
+   ============================================================ */
+
+/* BUTTONS -- 44px min-height. btn-admin is the red admin accent.
+   btn-destructive is for actions that can't be undone. */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:var(--sp2); font-family:var(--font); font-size:var(--text-sm); font-weight:500; letter-spacing:0.03em; min-height:44px; padding:0 var(--sp5); border-radius:var(--radius-md); border:1px solid transparent; cursor:pointer; white-space:nowrap; }
+.btn-primary { background:var(--color-text-primary); color:var(--color-surface); border-color:var(--color-text-primary); }
+.btn-secondary { background:transparent; color:var(--color-text-primary); border-color:var(--color-border-strong); }
+.btn-admin { background:var(--color-admin); border-color:var(--color-admin); color:#fff; }
+.btn-destructive { background:var(--color-critical); border-color:var(--color-critical); color:#fff; }
+.btn-sm { font-size:var(--text-xs); min-height:32px; padding:0 var(--sp3); }
+
+/* BADGES -- font-retina at 11px. Semantic colours only.
+   badge-admin is the red admin accent. badge-critical means a headset
+   is in an actual fault state. Don't use it for warnings. */
+.badge { display:inline-flex; align-items:center; gap:var(--sp1); font-size:var(--text-xs); font-weight:500; letter-spacing:0.04em; padding:var(--sp1) var(--sp2); border-radius:var(--radius-sm); white-space:nowrap; }
+.badge-success  { background:var(--color-success-bg);  color:var(--color-success);  }
+.badge-warning  { background:var(--color-warning-bg);  color:var(--color-warning);  }
+.badge-critical { background:var(--color-critical-bg); color:var(--color-critical); }
+.badge-neutral  { background:var(--color-surface-raised); color:var(--color-text-secondary); }
+.badge-admin    { background:var(--color-admin-bg);    color:var(--color-admin);    }
+.badge-student  { background:var(--color-student-bg);  color:var(--color-student);  }
+.badge-lecturer { background:var(--color-lecturer-bg); color:var(--color-lecturer); }
+.status-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dot-success  { background:var(--color-success); }
+.dot-warning  { background:var(--color-warning); }
+.dot-critical { background:var(--color-critical); }
+
+/* CARDS -- base surface. card-alert is critical left-border (red);
+   card-alert-warning is amber. AD-01 uses these for the priority issues
+   panel. The critical variant is what Ruby sees first. It demands
+   immediate action. Don't use it for routine informational cards. */
+.card { background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:var(--sp5); }
+.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--sp4); }
+.card-title { font-size:var(--text-md); font-weight:500; letter-spacing:-0.01em; }
+.card-subtitle { font-size:var(--text-sm); color:var(--color-text-secondary); margin-top:var(--sp1); }
+.card-alert         { border-left:3px solid var(--color-critical); border-radius:0 var(--radius-lg) var(--radius-lg) 0; }
+.card-alert-warning { border-left:3px solid var(--color-warning);  border-radius:0 var(--radius-lg) var(--radius-lg) 0; }
+
+/* PROGRESS BARS -- 8px default, 5px for -sm (used in IoT data rows for
+   battery display). progress-track-sm + progress-fill-critical is the
+   "low battery" visual. MONIL: the battery bar is a visual affordance, not
+   just a number. Don't replace it with text-only display; brief says visual. */
+.progress-wrap { display:flex; flex-direction:column; gap:var(--sp1); }
+.progress-track { width:100%; height:8px; background:var(--color-surface-raised); border-radius:4px; border:1px solid var(--color-border); overflow:hidden; }
+.progress-fill { height:100%; border-radius:4px; background:var(--color-text-primary); }
+.progress-fill-student  { background:var(--color-student); }
+.progress-fill-success  { background:var(--color-success); }
+.progress-fill-warning  { background:var(--color-warning); }
+.progress-fill-critical { background:var(--color-critical); }
+.progress-track-sm { height:5px; }
+
+/* INPUTS / TOGGLE -- 44px inputs, standard toggle with :has() logic.
+   MONIL: the toggle uses :has(input:checked) not JavaScript. Keep the
+   checkbox input inside .toggle-track or the whole thing stops working. */
+.input-wrap { display:flex; flex-direction:column; gap:var(--sp2); }
+.input-label { font-size:var(--text-sm); font-weight:500; color:var(--color-text-secondary); letter-spacing:0.02em; }
+.input { font-family:var(--font); font-size:var(--text-base); color:var(--color-text-primary); background:var(--color-surface); border:1px solid var(--color-border-strong); border-radius:var(--radius-md); padding:0 var(--sp4); height:44px; width:100%; }
+.toggle-wrap { display:flex; align-items:center; gap:var(--sp3); cursor:pointer; user-select:none; }
+.toggle-track { position:relative; width:44px; height:24px; background:var(--color-border-strong); border-radius:12px; flex-shrink:0; }
+.toggle-track input { position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; margin:0; z-index:1; }
+.toggle-thumb { position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; pointer-events:none; box-shadow:0 1px 2px rgba(0,0,0,0.15); }
+.toggle-track:has(input:checked) { background:var(--color-admin); }
+.toggle-track:has(input:checked) .toggle-thumb { transform:translateX(20px); }
+.toggle-label { font-size:var(--text-sm); color:var(--color-text-secondary); }
+
+/* NAVBAR -- 56px, sticky top, admin-red active indicator.
+   .navbar-admin colours the active link underline in admin red.
+   MONIL: role pill ("Admin") is mandatory on every screen. Ruby needs
+   to know she's in admin view, especially after session transitions. */
+.navbar { display:flex; align-items:center; height:56px; padding:0 var(--sp6); background:var(--color-surface); border-bottom:1px solid var(--color-border); gap:var(--sp5); }
+.navbar-brand { font-size:var(--text-sm); font-weight:500; letter-spacing:0.05em; margin-right:var(--sp4); }
+.navbar-role-pill { font-size:var(--text-xs); font-weight:500; padding:var(--sp1) var(--sp3); border-radius:100px; letter-spacing:0.04em; }
+.navbar-links { display:flex; gap:var(--sp1); flex:1; }
+.navbar-link { font-size:var(--text-sm); color:var(--color-text-secondary); text-decoration:none; padding:var(--sp2) var(--sp3); border-radius:var(--radius-md); letter-spacing:0.02em; }
+.navbar-link.active { color:var(--color-text-primary); background:var(--color-surface-raised); font-weight:500; }
+.navbar-admin .navbar-link.active { box-shadow:inset 0 -2px 0 var(--color-admin); }
+.navbar-user { margin-left:auto; font-size:var(--text-xs); color:var(--color-text-secondary); }
+
+/* FILTER BAR -- segmented control. .filter-bar-admin colours the active
+   tab in admin red. Used on AD-02 (issues list), AD-03 (diagnostics),
+   and AD-09 (logs). Client-side filtering -- don't re-fetch on tab switch. */
+.filter-bar { display:flex; gap:var(--sp1); background:var(--color-surface-raised); padding:var(--sp1); border-radius:var(--radius-lg); border:1px solid var(--color-border); width:fit-content; }
+.filter-tab { font-family:var(--font-retina); font-size:var(--text-xs); font-weight:500; letter-spacing:0.04em; padding:var(--sp2) var(--sp3); border-radius:var(--radius-md); border:none; background:transparent; color:var(--color-text-secondary); cursor:pointer; white-space:nowrap; }
+.filter-tab.active { background:var(--color-surface); color:var(--color-text-primary); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.filter-bar-admin .filter-tab.active { color:var(--color-admin); }
+
+/* STAT TILE -- large number, small label, top accent border.
+   stat-tile-critical has a red top border and is used when a count
+   is non-zero and urgent (e.g. "3 critical issues"). MONIL: the
+   critical variant's number value turns red when > 0. That's driven
+   by the token, not a separate class -- just set the value. */
+.stat-tile { background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp2); min-width:140px; }
+.stat-tile-value { font-size:var(--text-2xl); font-weight:400; line-height:1; letter-spacing:-0.02em; }
+.stat-tile-label { font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.05em; text-transform:uppercase; }
+.stat-tile-admin    { border-top:3px solid var(--color-admin); }
+.stat-tile-lecturer { border-top:3px solid var(--color-lecturer); }
+.stat-tile-student  { border-top:3px solid var(--color-student); }
+.stat-tile-success  { border-top:3px solid var(--color-success); }
+.stat-tile-warning  { border-top:3px solid var(--color-warning); }
+.stat-tile-critical { border-top:3px solid var(--color-critical); }
+.stat-tile-critical .stat-tile-value { color:var(--color-critical); }
+
+/* STATUS BANNER -- full-width system health banner at top of AD-01.
+   Three states: ok (green), warn (amber), crit (red). Always visible,
+   even when all-clear. The all-clear state matters too -- Ruby needs to
+   know there are ZERO issues, not just be shown nothing. */
+.status-banner { display:flex; align-items:center; gap:var(--sp3); padding:var(--sp3) var(--sp5); border-radius:var(--radius-lg); border:1px solid; }
+.status-banner-ok   { background:var(--color-success-bg);  border-color:var(--color-success);  color:var(--color-success); }
+.status-banner-warn { background:var(--color-warning-bg);  border-color:var(--color-warning);  color:var(--color-warning); }
+.status-banner-crit { background:var(--color-critical-bg); border-color:var(--color-critical); color:var(--color-critical); }
+.status-banner-icon { width:14px; height:14px; border-radius:50%; flex-shrink:0; background:currentColor; }
+.status-banner-text { font-size:var(--text-sm); font-weight:500; flex:1; }
+.status-banner-time { font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; opacity:0.85; display:flex; align-items:center; gap:var(--sp2); }
+
+/* LIVE DOT -- pulsing green indicator for live IoT data freshness.
+   MONIL: prefers-reduced-motion kills the animation, falls back to
+   static. Don't remove the dot entirely in reduced-motion mode --
+   it still conveys "live" even when it's static. */
+.live-dot { width:7px; height:7px; border-radius:50%; background:var(--color-success); animation:pulse 2s ease-in-out infinite; flex-shrink:0; }
+.live-dot.dot-warning  { background:var(--color-warning); }
+.live-dot.dot-critical { background:var(--color-critical); }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+@media (prefers-reduced-motion:reduce){ .live-dot{animation:none;} }
+.live-timestamp { font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em; }
+
+/* LIVE ROW (diagnostics table) -- IoT data row component used on AD-03.
+   Uses --font-data (SemiCondensed) for compact column layout.
+   Seven columns: ID, student, firmware, battery (bar), status, last seen, actions.
+   MONIL: battery is a .progress-track-sm bar, not a number. Brief says visual.
+   The whole row background changes on critical status. Don't just badge it. */
+.live-row { display:grid; grid-template-columns:90px 1fr 110px 110px 100px 110px 90px; gap:var(--sp4); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md); font-size:var(--text-sm); cursor:pointer; }
+.live-row.is-critical { border-left:3px solid var(--color-critical); }
+.live-row.is-warning  { border-left:3px solid var(--color-warning); }
+.live-row-id { font-family:var(--font-data); font-weight:500; letter-spacing:0.04em; }
+.live-row-student { display:flex; flex-direction:column; gap:2px; }
+.live-row-student-name { font-weight:500; font-size:var(--text-sm); }
+.live-row-student-meta { font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.03em; }
+.live-row-battery { display:flex; flex-direction:column; gap:3px; }
+.live-row-battery-label { font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary); }
+.live-row-conn { display:flex; align-items:center; gap:var(--sp2); font-size:var(--text-sm); }
+.live-row-live { display:flex; align-items:center; gap:var(--sp2); justify-content:flex-end; }
+
+/* MODAL -- confirmation dialogs for high-stakes actions. btn-destructive
+   actions (firmware force-push, factory reset, loan recall) all require
+   a modal confirm step. Cancel is mandatory. Non-negotiable.
+   MONIL: these are real hardware operations. The consequences are physical. */
+.modal-backdrop { background:rgba(26,26,24,0.45); }
+.modal { background:var(--color-surface); border:1px solid var(--color-border-strong); border-radius:var(--radius-lg); padding:var(--sp6); max-width:460px; }
+
+/* DOC CHROME -- sticky header, horizontal gallery, frame wrappers,
+   flow arrows, annotation callouts. Wireframe scaffolding only.
+   MONIL: nothing outside .frame ships in the hi-fi. */
+.doc-header { position:sticky; top:0; z-index:50; background:var(--color-bg); border-bottom:1px solid var(--color-border); padding:var(--sp4) var(--sp7); display:flex; align-items:center; justify-content:space-between; gap:var(--sp5); }
+.doc-header-text { display:flex; flex-direction:column; gap:2px; }
+.doc-header-title { font-size:var(--text-md); font-weight:500; }
+.doc-header-sub { font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em; }
+.theme-toggle-btn { font-family:var(--font-retina); font-size:11px; letter-spacing:0.06em; background:var(--color-surface); color:var(--color-text-secondary); border:1px solid var(--color-border-strong); border-radius:6px; padding:8px 16px; cursor:pointer; }
+.gallery { display:flex; align-items:flex-start; gap:96px; padding:64px 64px 96px; min-width:max-content; }
+.frame-wrap { display:flex; flex-direction:column; gap:var(--sp4); position:relative; }
+.frame-id { font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.08em; text-transform:uppercase; color:var(--color-text-tertiary); display:flex; align-items:center; gap:var(--sp3); }
+.frame-id strong { color:var(--color-text-primary); font-weight:500; }
+.frame { width:1280px; background:var(--color-bg); border:1.5px solid var(--color-border-strong); border-radius:var(--radius-lg); overflow:hidden; position:relative; }
+.frame-h-900 { height:900px; }
+.frame-h-720 { height:720px; }
+.btn-fullwidth { width:100%; }
+.flow-arrow { position:absolute; top:50%; right:-88px; width:80px; height:24px; display:flex; align-items:center; pointer-events:none; }
+.flow-arrow .line { flex:1; height:1px; background:var(--color-border-strong); }
+.flow-arrow .head { width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:8px solid var(--color-border-strong); }
+.flow-arrow .label { position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-family:var(--font-retina); font-size:10px; letter-spacing:0.06em; color:var(--color-text-tertiary); text-transform:uppercase; white-space:nowrap; }
+.callout { position:absolute; font-family:var(--font-retina); font-size:11px; letter-spacing:0.02em; color:var(--color-text-secondary); background:var(--color-surface); border:1px solid var(--color-border-strong); border-radius:var(--radius-sm); padding:6px 10px; max-width:240px; line-height:1.45; box-shadow:0 2px 6px rgba(0,0,0,0.06); z-index:5; }
+.leader { position:absolute; border-top:1px dashed var(--color-border-strong); z-index:4; pointer-events:none; }
+
+/* AD-01 -- ADMIN DASHBOARD. Status banner at top (always visible),
+   then stat tiles row, then priority issues left (ABOVE FOLD, always),
+   then fleet overview right. MONIL: the priority issues panel being
+   above fold was in the brief. Ruby sees issues before anything else. */
+.ad01-content { padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4); }
+.priority-row { display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--sp4); }
+.section-heading { font-size:var(--text-md); font-weight:500; letter-spacing:-0.01em; display:flex; align-items:center; gap:var(--sp3); }
+
+/* AD-02 -- PRIORITY ISSUES LIST. Sorted by severity, then timestamp.
+   Most critical issue at top, always. Inline action buttons per row
+   (Update Firmware, Resolve) so Ruby doesn't have to navigate away.
+   MONIL: "Resolve" removes the issue from this list. It's permanent.
+   Needs confirmation. Don't make it a one-click action. */
+.ad02-content { padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4); }
+.issue-table-header { display:grid; grid-template-columns:120px 110px 1fr 1.5fr 110px 360px; gap:var(--sp3); padding:var(--sp3) var(--sp4); font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-tertiary); border-bottom:1px solid var(--color-border-strong); }
+.issue-row { display:grid; grid-template-columns:120px 110px 1fr 1.5fr 110px 360px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); border-bottom:1px solid var(--color-border); font-size:var(--text-sm); }
+.issue-row:last-child { border-bottom:none; }
+.issue-actions { display:flex; gap:var(--sp1); }
+
+/* AD-03 -- DIAGNOSTICS PANEL. Live IoT data table, 7 columns.
+   Admin variant is wider than the base live-row spec (7 vs 6 cols).
+   Columns: ID, student, firmware, battery bar, status, last seen, actions.
+   MONIL: the grid-template here overrides the base live-row layout.
+   If you change column count, update both the header and row templates. */
+.diag-header { display:grid; grid-template-columns:90px 1fr 110px 110px 100px 110px 90px; gap:var(--sp4); padding:0 var(--sp4); font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-tertiary); }
+
+/* AD-04 -- HEADSET DETAIL. Two-column: headset status left, activity
+   log right. The status section shows battery, firmware, connection,
+   last sync -- all live IoT data. Activity log shows the 5 most recent
+   events. MONIL: clicking any row in AD-03 navigates to this screen. */
+.ad04-content { padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4); }
+.ad04-grid { display:grid; grid-template-columns:1fr 380px; gap:var(--sp5); }
+.headset-status { display:flex; flex-direction:column; gap:var(--sp3); }
+.headset-status-row { display:grid; grid-template-columns:140px 1fr; gap:var(--sp4); padding:var(--sp3) 0; border-bottom:1px solid var(--color-border); align-items:center; }
+.headset-status-row:last-child { border-bottom:none; }
+.headset-status-label { font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.05em; text-transform:uppercase; color:var(--color-text-tertiary); }
+.headset-status-value { display:flex; align-items:center; gap:var(--sp2); font-size:var(--text-sm); }
+.activity-row { display:grid; grid-template-columns:160px 1fr; gap:var(--sp4); padding:var(--sp3) 0; border-bottom:1px solid var(--color-border); font-size:var(--text-sm); }
+.activity-row:last-child { border-bottom:none; }
+.activity-time { font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em; }
+
+/* AD-05 -- FIRMWARE MANAGER. Two-panel: headset checklist left (with
+   bulk-select), settings/schedule right. The in-progress push state
+   shows per-device progress bars in real time.
+   MONIL: off-peak scheduling is on the right panel. It's there to
+   prevent firmware pushes during active sessions. Implement it.
+   The push is a background operation -- Ruby shouldn't need to stay
+   on this screen while it runs. Show progress but don't block navigation. */
+.ad05-content { padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4); height:calc(900px - 56px); }
+.ad05-split { display:grid; grid-template-columns:480px 1fr; gap:var(--sp5); flex:1; min-height:0; }
+.fw-list-row { display:grid; grid-template-columns:24px 90px 1fr auto auto; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); border:1px solid var(--color-border); border-radius:var(--radius-md); margin-bottom:var(--sp2); background:var(--color-surface); }
+.fw-checkbox { width:18px; height:18px; border:1.5px solid var(--color-border-strong); border-radius:3px; display:flex; align-items:center; justify-content:center; background:var(--color-admin); border-color:var(--color-admin); color:#fff; font-size:12px; }
+.fw-progress-row { display:grid; grid-template-columns:90px 1fr 60px; gap:var(--sp3); align-items:center; padding:var(--sp3) 0; border-bottom:1px solid var(--color-border); font-size:var(--text-sm); }
+.fw-progress-row:last-child { border-bottom:none; }
+.settings-section-title { font-family:var(--font-retina); font-size:var(--text-xs); font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-tertiary); margin-bottom:var(--sp3); }
+
+/* AD-06 -- LOAN PROGRAM. Table of loaned headsets with student,
+   return date, condition, and direct contact action. Remote students
+   get loaned units; on-campus use fixed assets.
+   MONIL: the contact action links to AD-10 Comms Panel. Direct
+   loan-chasing comms route. Wire it up. */
+.ad06-content { padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4); }
+.loan-row { display:grid; grid-template-columns:1.2fr 100px 110px 130px 130px 130px 110px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); border-bottom:1px solid var(--color-border); font-size:var(--text-sm); }
+.loan-row:last-child { border-bottom:none; }
+.loan-header { font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-tertiary); border-bottom:1px solid var(--color-border-strong); }
+</style>
+</head>
+<body data-screen-label="WP4 Wireframes -- Ruby">
+
+<div class="doc-header">
+  <div class="doc-header-text">
+    <span class="doc-header-title">NTS Design Prototype | Group 27 | Admin Persona (Ruby Jones)</span>
+    <span class="doc-header-sub">WP4 -- Lo-fi wireframes for Part 6 handoff. Scroll horizontally through the flow.</span>
+  </div>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span id="theme-label">Dark mode</span>
+  </button>
+</div>
+
+<div class="gallery">
+
+  <!-- LG-01 -- LOGIN. Role-agnostic. Same screen for everyone.
+       System detects Admin role post-auth and redirects to AD-01.
+       University SSO, no separate NTS account. One login screen. -->
+  <div class="frame-wrap" data-screen-label="LG-01 Login">
+    <div class="frame-id"><strong>LG-01</strong><span>Login (entry)</span><span>1280 × 720</span></div>
+    <div class="frame frame-h-720" style="display:flex; align-items:center; justify-content:center; padding:var(--sp7) var(--sp5);">
+
+      <div style="display:flex; flex-direction:column; align-items:center; gap:var(--sp5); width:100%; max-width:440px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:var(--sp1);">
+          <span style="font-family:var(--font); font-size:48px; font-weight:500; letter-spacing:0.12em; line-height:1; color:var(--color-text-primary);">NTS</span>
+          <span style="font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.08em; color:var(--color-text-tertiary); text-transform:uppercase;">Nursing Training Simulator</span>
+        </div>
+
+        <div class="modal" style="max-width:440px; width:100%;" id="lg01-card">
+          <div style="font-size:var(--text-md); font-weight:500; margin-bottom:var(--sp2);">Sign in</div>
+          <div class="card-subtitle" style="margin-bottom:var(--sp4); margin-top:0;">Sign in with your university credentials</div>
+
+          <div style="display:flex; flex-direction:column; gap:var(--sp4);">
+            <div class="input-wrap" id="lg01-email">
+              <label class="input-label">University email</label>
+              <input class="input" type="email" value="r.jones@university.ac.uk">
+            </div>
+            <div class="input-wrap">
+              <label class="input-label">Password</label>
+              <input class="input" type="password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-admin btn-fullwidth" id="lg01-cta" style="margin-top:var(--sp2);">Sign In</button>
+            <div id="lg01-rolenote" style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); text-align:center; letter-spacing:0.02em; margin-top:var(--sp1);">
+              Role is assigned automatically based on your account.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="top:140px; left:24px; width:230px;">University SSO -- no separate NTS account needed.</div>
+      <div class="leader" style="top:280px; left:254px; width:166px;"></div>
+
+      <div class="callout" style="top:340px; left:24px; width:230px;">On success: system detects Admin role, redirects to AD-01 Admin Dashboard.</div>
+      <div class="leader" style="top:474px; left:254px; width:166px;"></div>
+
+      <div class="callout" style="top:540px; right:24px; width:232px;">Same login screen for all roles. Routing is automatic post-authentication.</div>
+      <div class="leader" style="top:574px; right:254px; width:186px;"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Auth success -- Admin role detected</span></div>
+  </div>
+
+
+  <!-- AD-01 -- ADMIN DASHBOARD. Ruby's landing screen.
+       Status banner at top, always visible. Stat tiles: total headsets,
+       active sessions, critical issues, pending updates. Priority issues
+       panel above fold -- first thing she sees after the banner.
+       MONIL: two states needed in Figma: all-clear (green banner,
+       zero critical tile) and issues-present (red banner, non-zero counts). -->
+  <div class="frame-wrap" data-screen-label="AD-01 Dashboard">
+    <div class="frame-id"><strong>AD-01</strong><span>Admin Dashboard</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link active" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad01-content">
+        <!-- Status banner -->
+        <div class="status-banner status-banner-warn">
+          <span class="status-banner-icon"></span>
+          <span class="status-banner-text">Issues detected -- 2 headsets require attention before assessment</span>
+          <span class="status-banner-time"><span class="live-dot dot-warning"></span>Updated 4s ago</span>
+        </div>
+
+        <!-- Priority Issues -->
+        <div>
+          <div class="section-heading" style="margin-bottom: var(--sp3);">
+            Priority Issues
+            <span class="badge badge-critical">2</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:var(--sp3);">
+            <div class="card card-alert" style="padding:var(--sp4) var(--sp5);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--sp4);">
+                <div style="display:flex; flex-direction:column; gap:var(--sp2);">
+                  <div style="display:flex; align-items:center; gap:var(--sp3);">
+                    <span class="badge badge-critical">CRITICAL</span>
+                    <span style="font-family:var(--font-data); font-weight:500; letter-spacing:0.04em;">HMD-009</span>
+                    <span style="font-size:var(--text-sm); color:var(--color-text-secondary);">Sarah Smith · Remote</span>
+                  </div>
+                  <div style="font-size:var(--text-sm);">Firmware outdated: v2.1.3 installed, v2.4.0 required</div>
+                  <span class="live-timestamp">Detected 08:42am</span>
+                </div>
+                <div style="display:flex; gap:var(--sp2);">
+                  <button class="btn btn-admin btn-sm">Push Update</button>
+                  <button class="btn btn-secondary btn-sm">View Details</button>
+                </div>
+              </div>
+            </div>
+            <div class="card card-alert-warning" style="padding:var(--sp4) var(--sp5);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--sp4);">
+                <div style="display:flex; flex-direction:column; gap:var(--sp2);">
+                  <div style="display:flex; align-items:center; gap:var(--sp3);">
+                    <span class="badge badge-warning">WARNING</span>
+                    <span style="font-family:var(--font-data); font-weight:500; letter-spacing:0.04em;">HMD-014</span>
+                    <span style="font-size:var(--text-sm); color:var(--color-text-secondary);">James Park · Remote</span>
+                  </div>
+                  <div style="font-size:var(--text-sm);">Poor WiFi connection: signal strength 42% (threshold: 60%)</div>
+                  <span class="live-timestamp">Detected 09:01am</span>
+                </div>
+                <div style="display:flex; gap:var(--sp2);">
+                  <button class="btn btn-secondary btn-sm">Notify Student</button>
+                  <button class="btn btn-secondary btn-sm">View Details</button>
+                </div>
+              </div>
+            </div>
+            <a href="#" style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-admin); letter-spacing:0.04em; text-decoration:none;">View all issues →</a>
+          </div>
+        </div>
+
+        <!-- Stat tiles -->
+        <div class="priority-row">
+          <div class="stat-tile stat-tile-success"><span class="stat-tile-value">20</span><span class="stat-tile-label">Headsets online</span></div>
+          <div class="stat-tile stat-tile-admin"><span class="stat-tile-value">3</span><span class="stat-tile-label">Active sessions</span></div>
+          <div class="stat-tile stat-tile-critical"><span class="stat-tile-value">2</span><span class="stat-tile-label">Priority alerts</span></div>
+          <div class="stat-tile stat-tile-lecturer"><span class="stat-tile-value">22</span><span class="stat-tile-label">Total headsets</span></div>
+        </div>
+
+        <!-- Quick links -->
+        <div>
+          <div class="section-heading" style="margin-bottom: var(--sp3);">Quick Links</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp3);">
+            <button class="btn btn-secondary">Diagnostics</button>
+            <button class="btn btn-secondary">Firmware</button>
+            <button class="btn btn-secondary">Loans</button>
+            <button class="btn btn-secondary">Logs</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- All 4 in whitespace below content (y≈450+), vertical leaders up to elements -->
+      <div class="callout" style="top:500px; right:24px;">ALWAYS visible. Never hidden, even when all-clear.</div>
+      <div class="leader" style="top:110px; right:244px; width:0; height:390px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="top:600px; right:24px;">ABOVE FOLD. First thing Ruby sees. Sorted by severity.</div>
+      <div class="leader" style="top:250px; right:244px; width:0; height:350px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="top:700px; right:24px;">Red left border = .card-alert. Demands immediate action.</div>
+      <div class="leader" style="top:360px; right:244px; width:0; height:340px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="top:700px; left:24px; width:220px;">Red value when &gt; 0. Matches critical colour token.</div>
+      <div class="leader" style="top:170px; left:200px; width:0; height:550px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Drill into list</span></div>
+  </div>
+
+
+  <!-- AD-02 -- PRIORITY ISSUES LIST. Full list sorted severity-first.
+       Each row has severity badge, device ID, description, timestamp,
+       and inline actions (Update Firmware, Resolve). Ruby should be
+       able to handle issues without leaving this screen. -->
+  <div class="frame-wrap" data-screen-label="AD-02 Issues">
+    <div class="frame-id"><strong>AD-02</strong><span>Priority Issues List</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link active" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad02-content">
+        <a href="#" style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-admin); letter-spacing:0.04em; text-decoration:none;">← Back to Dashboard</a>
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="section-heading">All Priority Issues <span class="badge badge-critical">2</span></div>
+          <div class="filter-bar filter-bar-admin">
+            <button class="filter-tab active">All (2)</button>
+            <button class="filter-tab">Critical (1)</button>
+            <button class="filter-tab">Warning (1)</button>
+            <button class="filter-tab">Info (0)</button>
+          </div>
+        </div>
+
+        <span class="live-timestamp">Sorted by: Severity (desc), then Timestamp</span>
+
+        <div class="card" style="padding:0;">
+          <div class="issue-table-header">
+            <span>Severity</span>
+            <span>Headset</span>
+            <span>Student</span>
+            <span>Issue</span>
+            <span>Detected</span>
+            <span>Actions</span>
+          </div>
+          <div class="issue-row">
+            <span><span class="badge badge-critical">CRITICAL</span></span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-009</span>
+            <span>Sarah Smith <span style="color:var(--color-text-tertiary); font-size:var(--text-xs);">(Remote)</span></span>
+            <span>Firmware outdated v2.1.3</span>
+            <span class="live-timestamp">08:42am</span>
+            <div class="issue-actions">
+              <button class="btn btn-admin btn-sm">Push Update</button>
+              <button class="btn btn-secondary btn-sm">Notify</button>
+              <button class="btn btn-secondary btn-sm">Details</button>
+              <button class="btn btn-secondary btn-sm">Resolve</button>
+            </div>
+          </div>
+          <div class="issue-row">
+            <span><span class="badge badge-warning">WARNING</span></span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-014</span>
+            <span>James Park <span style="color:var(--color-text-tertiary); font-size:var(--text-xs);">(Remote)</span></span>
+            <span>WiFi signal 42%</span>
+            <span class="live-timestamp">09:01am</span>
+            <div class="issue-actions">
+              <button class="btn btn-secondary btn-sm">Notify</button>
+              <button class="btn btn-secondary btn-sm">Details</button>
+              <button class="btn btn-secondary btn-sm">Resolve</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding:var(--sp4); font-family:var(--font-retina); font-size:var(--text-sm); color:var(--color-text-secondary); letter-spacing:0.03em;">
+          No further issues. Assessment clears in 58 minutes.
+        </div>
+      </div>
+
+      <!-- Under content, spread horizontally, vertical leaders up -->
+      <div class="callout" style="bottom:200px; left:24px; width:220px;">Severity first, then timestamp. Highest priority always top.</div>
+      <div class="leader" style="top:185px; left:124px; width:0; height:515px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:140px; left:280px; width:220px;">Direct action from list -- no need to navigate to firmware screen.</div>
+      <div class="leader" style="top:340px; left:500px; width:0; height:380px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:80px; left:540px; width:220px;">Marks issue resolved. Removes from priority list.</div>
+      <div class="leader" style="top:460px; left:660px; width:0; height:360px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Diagnostics tab</span></div>
+  </div>
+
+
+  <!-- AD-03 -- DIAGNOSTICS PANEL. Live IoT data for all headsets.
+       Battery bars, firmware versions, connection status, last sync
+       timestamp. Pulsing live dot confirms data freshness.
+       MONIL: clicking any row opens AD-04 headset detail.
+       Critical rows get a red left-border. Warning rows get amber.
+       It needs to be readable at a glance across the whole fleet. -->
+  <div class="frame-wrap" data-screen-label="AD-03 Diagnostics">
+    <div class="frame-id"><strong>AD-03</strong><span>Diagnostics Panel</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link active" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad02-content">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="section-heading">Headset Diagnostics</div>
+          <div style="display:flex; gap:var(--sp3); align-items:center;">
+            <span class="live-timestamp" style="display:inline-flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span>Live data · refreshes every 5s</span>
+            <select class="input" style="height:32px; font-size:var(--text-xs); padding:0 var(--sp3); width:auto;">
+              <option selected="selected">Sort by: Status</option>
+              <option>Sort by: ID</option>
+              <option>Sort by: Battery</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-bar filter-bar-admin">
+          <button class="filter-tab active">All (22)</button>
+          <button class="filter-tab">Online (20)</button>
+          <button class="filter-tab">Issues (2)</button>
+          <button class="filter-tab">Offline (0)</button>
+        </div>
+
+        <div class="diag-header">
+          <span>ID</span><span>Student</span><span>Type</span><span>Battery</span><span>Connection</span><span>Version</span><span>Live</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:var(--sp2);">
+          <!-- Row 1 -->
+          <div class="live-row">
+            <span class="live-row-id">HMD-001</span>
+            <div class="live-row-student">
+              <span class="live-row-student-name">Sarah Chen</span>
+              <span class="live-row-student-meta">On-campus</span>
+            </div>
+            <span class="badge badge-lecturer">On-campus</span>
+            <div class="live-row-battery">
+              <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-success" style="width:91%"></div></div>
+              <span class="live-row-battery-label">91%</span>
+            </div>
+            <div class="live-row-conn"><span class="status-dot dot-success"></span>Strong</div>
+            <span style="font-family:var(--font-data); font-size:var(--text-sm);">v2.4.0</span>
+            <div class="live-row-live"><span class="live-dot"></span><span class="live-timestamp">8s ago</span></div>
+          </div>
+
+          <!-- Row 2 CRITICAL -->
+          <div class="live-row is-critical">
+            <span class="live-row-id">HMD-009</span>
+            <div class="live-row-student">
+              <span class="live-row-student-name">Sarah Smith</span>
+              <span class="live-row-student-meta">Remote</span>
+            </div>
+            <span class="badge badge-student">Remote</span>
+            <div class="live-row-battery">
+              <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-student" style="width:78%"></div></div>
+              <span class="live-row-battery-label">78%</span>
+            </div>
+            <div class="live-row-conn"><span class="status-dot dot-success"></span>Strong</div>
+            <span class="badge badge-critical" style="font-family:var(--font-data);">v2.1.3</span>
+            <div class="live-row-live"><span class="live-dot dot-critical"></span><span class="live-timestamp">3s ago</span></div>
+          </div>
+
+          <!-- Row 3 WARNING -->
+          <div class="live-row is-warning">
+            <span class="live-row-id">HMD-014</span>
+            <div class="live-row-student">
+              <span class="live-row-student-name">James Park</span>
+              <span class="live-row-student-meta">Remote</span>
+            </div>
+            <span class="badge badge-student">Remote</span>
+            <div class="live-row-battery">
+              <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-student" style="width:65%"></div></div>
+              <span class="live-row-battery-label">65%</span>
+            </div>
+            <div class="live-row-conn"><span class="status-dot dot-warning"></span>Weak (42%)</div>
+            <span style="font-family:var(--font-data); font-size:var(--text-sm);">v2.4.0</span>
+            <div class="live-row-live"><span class="live-dot dot-warning"></span><span class="live-timestamp">12s ago</span></div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="live-row">
+            <span class="live-row-id">HMD-003</span>
+            <div class="live-row-student">
+              <span class="live-row-student-name">Mei Chen</span>
+              <span class="live-row-student-meta">On-campus</span>
+            </div>
+            <span class="badge badge-lecturer">On-campus</span>
+            <div class="live-row-battery">
+              <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-success" style="width:88%"></div></div>
+              <span class="live-row-battery-label">88%</span>
+            </div>
+            <div class="live-row-conn"><span class="status-dot dot-success"></span>Strong</div>
+            <span style="font-family:var(--font-data); font-size:var(--text-sm);">v2.4.0</span>
+            <div class="live-row-live"><span class="live-dot"></span><span class="live-timestamp">5s ago</span></div>
+          </div>
+
+          <!-- Row 5 -->
+          <div class="live-row">
+            <span class="live-row-id">HMD-022</span>
+            <div class="live-row-student">
+              <span class="live-row-student-name">Tom Nguyen</span>
+              <span class="live-row-student-meta">On-campus</span>
+            </div>
+            <span class="badge badge-lecturer">On-campus</span>
+            <div class="live-row-battery">
+              <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-warning" style="width:45%"></div></div>
+              <span class="live-row-battery-label">45%</span>
+            </div>
+            <div class="live-row-conn"><span class="status-dot dot-success"></span>Strong</div>
+            <span style="font-family:var(--font-data); font-size:var(--text-sm);">v2.4.0</span>
+            <div class="live-row-live"><span class="live-dot dot-warning"></span><span class="live-timestamp">17s ago</span></div>
+          </div>
+
+          <div style="opacity:0.55; text-align:center; padding:var(--sp3); font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em;">
+            ...and 17 more headsets
+          </div>
+        </div>
+      </div>
+
+      <!-- All under content at bottom:180px, spread horizontally, vertical leaders up -->
+      <div class="callout" style="bottom:180px; left:24px; width:200px;">CRITICAL row -- outdated firmware highlighted in badge, not just text.</div>
+      <div class="leader" style="top:370px; left:124px; width:0; height:350px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:180px; left:250px; width:200px;">Battery shown as visual bar -- not just a number. IoT requirement.</div>
+      <div class="leader" style="top:530px; left:830px; width:0; height:170px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:180px; right:70px; width:200px;">Pulsing dot confirms data is live. Timestamp shows freshness.</div>
+      <div class="leader" style="top:550px; right:100px; width:0; height:100px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:180px; left:720px; width:220px;">Clicking any row opens AD-04 Headset Detail View.</div>
+      <div class="leader" style="top:570px; left:350px; width:0; height:150px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Click row</span></div>
+  </div>
+
+
+  <!-- AD-04 -- HEADSET DETAIL. Two-column: device status left,
+       activity log right (5 most recent events). Status rows show
+       battery, firmware version, connection, last sync -- all live.
+       MONIL: firmware version shown in a critical badge when outdated,
+       not plain text. The badge is the alert mechanism. Don't flatten it. -->
+  <div class="frame-wrap" data-screen-label="AD-04 Detail">
+    <div class="frame-id"><strong>AD-04</strong><span>Headset Detail View</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link active" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad04-content">
+        <a href="#" style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-admin); letter-spacing:0.04em; text-decoration:none;">← Back to Diagnostics</a>
+
+        <!-- Profile card -->
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:var(--sp3); flex-wrap:wrap;">
+            <span style="font-family:var(--font-data); font-size:var(--text-xl); font-weight:500; letter-spacing:0.03em;">HMD-009</span>
+            <span class="badge badge-student">Remote</span>
+            <span class="badge badge-critical">Critical</span>
+          </div>
+          <div class="card-subtitle">Sarah Smith · s1234567 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="07746675666f29746a6e736f4772696e29626372296672">[email&nbsp;protected]</a></div>
+        </div>
+
+        <div class="ad04-grid">
+          <!-- Live stats -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom:var(--sp3);">
+              <div class="card-title">Live Status</div>
+              <span class="live-timestamp" style="display:inline-flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span>Updated 3s ago</span>
+            </div>
+            <div class="headset-status">
+              <div class="headset-status-row">
+                <span class="headset-status-label">Battery</span>
+                <div class="headset-status-value" style="display:grid; grid-template-columns:1fr 60px; gap:var(--sp3); width:100%;">
+                  <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-student" style="width:78%"></div></div>
+                  <span style="font-family:var(--font-data);">78%</span>
+                </div>
+              </div>
+              <div class="headset-status-row">
+                <span class="headset-status-label">Connection</span>
+                <div class="headset-status-value">
+                  <span class="status-dot dot-success"></span>Strong (87ms)
+                </div>
+              </div>
+              <div class="headset-status-row">
+                <span class="headset-status-label">Software</span>
+                <div class="headset-status-value">
+                  <span class="badge badge-critical" style="font-family:var(--font-data);">v2.1.3 -- outdated</span>
+                </div>
+              </div>
+              <div class="headset-status-row">
+                <span class="headset-status-label">Last active</span>
+                <span class="headset-status-value">Today, 09:14am</span>
+              </div>
+              <div class="headset-status-row">
+                <span class="headset-status-label">Location</span>
+                <span class="headset-status-value">Remote -- off-campus</span>
+              </div>
+              <div class="headset-status-row">
+                <span class="headset-status-label">Model</span>
+                <span class="headset-status-value">Meta Quest 3 (Loaned)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="card" style="display:flex; flex-direction:column; gap:var(--sp3);">
+            <div class="card-title" style="margin-bottom:var(--sp2);">Actions</div>
+            <button class="btn btn-admin" style="width:100%; min-height:52px; font-size:var(--text-md);">Remote Troubleshoot</button>
+            <button class="btn btn-secondary" style="width:100%;">Send Notification to Student</button>
+            <div style="display:flex; flex-direction:column; gap:var(--sp2); margin-top:var(--sp2); padding-top:var(--sp3); border-top:1px solid var(--color-border);">
+              <button class="btn btn-secondary btn-sm">Push Firmware Update (v2.4.0)</button>
+              <button class="btn btn-secondary btn-sm">View in Firmware Manager</button>
+              <button class="btn btn-secondary btn-sm">Mark as Unavailable</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity log -->
+        <div class="card">
+          <div class="card-header" style="margin-bottom:var(--sp3);">
+            <div class="card-title">Activity Log -- Last 5 Events</div>
+          </div>
+          <div class="activity-row">
+            <span class="activity-time">09:14am</span>
+            <span>Device came online</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-time">09:01am</span>
+            <span>Signal strength dropped below threshold</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-time">08:42am</span>
+            <span style="color:var(--color-critical); font-weight:500;">Firmware check failed: v2.1.3 (required: v2.4.0)</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-time">Yesterday 18:30</span>
+            <span>Session completed</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-time">Yesterday 16:00</span>
+            <span>Firmware update declined by device</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left panel whitespace (content ends ~y=560). Right callouts moved here. -->
+      <div class="callout" style="top:150px; right:100px; width:200px;">PRIMARY CTA. Dominant. Reachable in 2 clicks from dashboard.</div>
+      <div class="leader" style="top:200px; right:200px; width:0; height:100px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <!-- Firmware version badge; vertical from status row -->
+      <div class="callout" style="bottom:420px; left:424px; width:200px;">Outdated version shown in critical badge -- not plain text.</div>
+      <div class="leader" style="top:450px; left:350px; width:100px;"></div>
+
+      <!-- Activity log is right panel; leader reaches across -->
+      <div class="callout" style="bottom:85px; right:284px; width:200px;">Timestamped audit trail -- 5 most recent events.</div>
+      <div class="leader" style="bottom:102px; right:480px; width:250px;"></div>
+
+      <!-- Notify button in right panel -->
+      <div class="callout" style="bottom:460px; right:450px; width:200px;">Triggers in-headset notification to remote student.</div>
+      <div class="leader" style="bottom:490px; right:380px; width:100px;"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Firmware tab</span></div>
+  </div>
+
+
+  <!-- AD-05 -- FIRMWARE MANAGER. Bulk-select headsets left,
+       schedule/settings right. Separate Figma frames for pre-push
+       and in-progress states. MONIL: the off-peak scheduling toggle
+       prevents pushing firmware during live sessions. It must work.
+       Pushing firmware to a headset mid-session is catastrophic. -->
+  <div class="frame-wrap" data-screen-label="AD-05 Firmware">
+    <div class="frame-id"><strong>AD-05</strong><span>Firmware Manager</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link active" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad05-content">
+        <div class="status-banner status-banner-warn">
+          <span class="status-banner-icon"></span>
+          <span class="status-banner-text">2 headsets require firmware update (v2.4.0)</span>
+          <span class="badge badge-critical">2 outdated</span>
+        </div>
+
+        <div class="ad05-split">
+          <!-- Left: Pending Updates -->
+          <div class="card" style="display:flex; flex-direction:column; gap:var(--sp3); overflow:hidden;">
+            <div class="card-header" style="margin-bottom:0;">
+              <div class="card-title">Pending Updates</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:var(--sp3); padding:var(--sp2) var(--sp3); background:var(--color-admin-bg); border-radius:var(--radius-md);">
+              <div class="fw-checkbox">✓</div>
+              <span style="font-size:var(--text-sm); font-weight:500;">2 headsets selected</span>
+              <a href="#" style="margin-left:auto; font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-admin); letter-spacing:0.04em; text-decoration:none;">Select all</a>
+            </div>
+            <div class="filter-bar filter-bar-admin">
+              <button class="filter-tab active">All outdated</button>
+              <button class="filter-tab">Remote only</button>
+              <button class="filter-tab">On-campus only</button>
+            </div>
+
+            <div style="flex:1; overflow-y:auto;">
+              <div class="fw-list-row">
+                <div class="fw-checkbox">✓</div>
+                <span style="font-family:var(--font-data); font-weight:500;">HMD-009</span>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <span style="font-size:var(--text-sm);">Sarah Smith <span style="color:var(--color-text-tertiary); font-size:var(--text-xs);">(Remote)</span></span>
+                  <span class="live-timestamp">v2.1.3 → v2.4.0</span>
+                </div>
+                <span class="badge badge-critical">Critical</span>
+                <span></span>
+              </div>
+              <div class="fw-list-row">
+                <div class="fw-checkbox">✓</div>
+                <span style="font-family:var(--font-data); font-weight:500;">HMD-017</span>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <span style="font-size:var(--text-sm);">Alex Nguyen <span style="color:var(--color-text-tertiary); font-size:var(--text-xs);">(Remote)</span></span>
+                  <span class="live-timestamp">v2.3.1 → v2.4.0</span>
+                </div>
+                <span class="badge badge-warning">Outdated</span>
+                <span></span>
+              </div>
+            </div>
+
+            <div style="text-align:center; padding:var(--sp3); font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em; opacity:0.7;">
+              All other headsets are up to date.
+            </div>
+          </div>
+
+          <!-- Right: Push Controls -->
+          <div class="card" style="display:flex; flex-direction:column; gap:var(--sp4); overflow-y:auto;">
+            <div class="card-header" style="margin-bottom:0;">
+              <div class="card-title">Push Controls</div>
+            </div>
+
+            <div>
+              <div class="settings-section-title">Update Details</div>
+              <div style="display:grid; grid-template-columns:140px 1fr; gap:var(--sp3); font-size:var(--text-sm);">
+                <span style="color:var(--color-text-secondary);">Current selection</span><span>v2.3.x and below</span>
+                <span style="color:var(--color-text-secondary);">Target</span><span style="font-family:var(--font-data); font-weight:500;">v2.4.0</span>
+                <span style="color:var(--color-text-secondary);">Size</span><span>156 MB</span>
+                <span style="color:var(--color-text-secondary);">Notes</span><a href="#" style="color:var(--color-admin); text-decoration:none;">View release notes →</a>
+              </div>
+            </div>
+
+            <div>
+              <div class="settings-section-title">Schedule</div>
+              <div style="display:flex; flex-direction:column; gap:var(--sp3);">
+                <label class="toggle-wrap">
+                  <div class="toggle-track"><input type="checkbox"><span class="toggle-thumb"></span></div>
+                  <span class="toggle-label">Schedule for off-peak hours</span>
+                </label>
+                <div class="input-wrap" style="opacity:0.45;">
+                  <label class="input-label">Off-peak time</label>
+                  <input class="input" type="text" value="02:00 AM" disabled="disabled">
+                </div>
+                <span class="live-timestamp">Estimated delivery: ~3 minutes (WiFi)</span>
+              </div>
+            </div>
+
+            <button class="btn btn-admin" style="width:100%; min-height:52px; font-size:var(--text-md);">Push Update to 2 Selected Headsets</button>
+
+            <!-- In-progress sub-state -->
+            <div style="border-top:1px dashed var(--color-border-strong); padding-top:var(--sp4); margin-top:var(--sp2);">
+              <div class="settings-section-title">In Progress</div>
+              <div class="fw-progress-row">
+                <span style="font-family:var(--font-data); font-weight:500;">HMD-009</span>
+                <div style="display:flex; flex-direction:column; gap:3px;">
+                  <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-student" style="width:45%"></div></div>
+                  <span class="live-timestamp">Downloading...</span>
+                </div>
+                <span style="font-family:var(--font-data); font-size:var(--text-sm); text-align:right;">45%</span>
+              </div>
+              <div class="fw-progress-row">
+                <span style="font-family:var(--font-data); font-weight:500;">HMD-017</span>
+                <div style="display:flex; flex-direction:column; gap:3px;">
+                  <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-student" style="width:12%"></div></div>
+                  <span class="live-timestamp">Downloading...</span>
+                </div>
+                <span style="font-family:var(--font-data); font-size:var(--text-sm); text-align:right;">12%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All 4 in left panel whitespace (480px wide, content ends ~y=300) -->
+      <div class="callout" style="top:340px; left:24px; width:230px;">Bulk action -- one click selects all outdated headsets.</div>
+      <div class="leader" style="top:240px; left:124px; width:0; height:100px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="top:480px; left:24px; width:230px;">Off-peak scheduling prevents disruption during active sessions.</div>
+      <div class="leader" style="top:505px; left:254px; width:400px;"></div>
+
+      <div class="callout" style="top:620px; left:24px; width:230px;">PRIMARY CTA. Large. One action covers all selected headsets.</div>
+      <div class="leader" style="top:645px; left:254px; width:400px;"></div>
+
+      <div class="callout" style="top:760px; left:24px; width:230px;">Live update progress -- admin can monitor without leaving screen.</div>
+      <div class="leader" style="top:785px; left:254px; width:400px;"></div>
+    </div>
+    <div class="flow-arrow"><div class="line"></div><div class="head"></div><span class="label">Loans tab</span></div>
+  </div>
+
+
+  <!-- AD-06 -- LOAN PROGRAM. Table of loaned headsets: student name,
+       condition, loan date, return due, status, contact action.
+       Remote students get loaned units. Each row has a direct contact
+       link to AD-10. MONIL: overdue loans show warning badge. -->
+  <div class="frame-wrap" data-screen-label="AD-06 Loans">
+    <div class="frame-id"><strong>AD-06</strong><span>Loan Program View</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link active" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div class="ad06-content">
+        <div class="priority-row">
+          <div class="stat-tile stat-tile-success"><span class="stat-tile-value">22</span><span class="stat-tile-label">Total allocated</span></div>
+          <div class="stat-tile stat-tile-student"><span class="stat-tile-value">8</span><span class="stat-tile-label">Remote loans</span></div>
+          <div class="stat-tile stat-tile-lecturer"><span class="stat-tile-value">14</span><span class="stat-tile-label">On-campus</span></div>
+          <div class="stat-tile stat-tile-warning"><span class="stat-tile-value">0</span><span class="stat-tile-label">Overdue returns</span></div>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:var(--sp4) var(--sp5); border-bottom:1px solid var(--color-border);">
+            <div class="card-title">Loan Records (22)</div>
+            <div style="display:flex; gap:var(--sp2);">
+              <button class="btn btn-admin">Allocate New Loan</button>
+              <button class="btn btn-secondary">Export Loan Records</button>
+            </div>
+          </div>
+
+          <div class="loan-row loan-header">
+            <span>Student</span>
+            <span>Headset</span>
+            <span>Location</span>
+            <span>Loan start</span>
+            <span>Return due</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+
+          <div class="loan-row">
+            <span style="font-weight:500;">Sarah Smith</span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-009</span>
+            <span><span class="badge badge-student">Remote</span></span>
+            <span class="live-timestamp">15 Mar 2026</span>
+            <span class="live-timestamp">30 Jun 2026</span>
+            <span><span class="badge badge-success">Active</span></span>
+            <span><button class="btn btn-secondary btn-sm">Contact</button></span>
+          </div>
+          <div class="loan-row">
+            <span style="font-weight:500;">James Park</span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-014</span>
+            <span><span class="badge badge-student">Remote</span></span>
+            <span class="live-timestamp">15 Mar 2026</span>
+            <span class="live-timestamp">30 Jun 2026</span>
+            <span><span class="badge badge-success">Active</span></span>
+            <span><button class="btn btn-secondary btn-sm">Contact</button></span>
+          </div>
+          <div class="loan-row">
+            <span style="font-weight:500;">Alex Nguyen</span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-017</span>
+            <span><span class="badge badge-student">Remote</span></span>
+            <span class="live-timestamp">15 Mar 2026</span>
+            <span class="live-timestamp">30 Jun 2026</span>
+            <span><span class="badge badge-success">Active</span></span>
+            <span><button class="btn btn-secondary btn-sm">Contact</button></span>
+          </div>
+          <div class="loan-row">
+            <span style="font-weight:500;">Mei Chen</span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-003</span>
+            <span><span class="badge badge-lecturer">On-campus</span></span>
+            <span class="live-timestamp">--</span>
+            <span class="live-timestamp">--</span>
+            <span><span class="badge badge-lecturer">On-campus unit</span></span>
+            <span style="color:var(--color-text-tertiary);">--</span>
+          </div>
+          <div class="loan-row">
+            <span style="font-weight:500;">Tom Nguyen</span>
+            <span style="font-family:var(--font-data); font-weight:500;">HMD-022</span>
+            <span><span class="badge badge-lecturer">On-campus</span></span>
+            <span class="live-timestamp">--</span>
+            <span class="live-timestamp">--</span>
+            <span><span class="badge badge-lecturer">On-campus unit</span></span>
+            <span style="color:var(--color-text-tertiary);">--</span>
+          </div>
+          <div class="loan-row" style="opacity:0.55; justify-content:center;">
+            <span style="grid-column:1/-1; text-align:center; font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary); letter-spacing:0.04em;">...17 more loan records</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom whitespace; vertical leaders up to table rows -->
+      <div class="callout" style="bottom:120px; left:24px; width:220px;">Remote students get loaned units. On-campus units are fixed assets.</div>
+      <div class="leader" style="top:380px; left:124px; width:0; height:400px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:120px; right:24px; width:220px;">Direct contact per student row. Links to AD-10 Comms Panel.</div>
+      <div class="leader" style="bottom:142px; right:244px; width:120px;"></div>
+    </div>
+  </div>
+
+
+  <!-- AD-07 -- ATTENDANCE MONITOR. Live check-in status for current
+       session. On-campus/remote split matches LC-01's view for
+       cross-role consistency. Ruby sees absences the moment they happen.
+       MONIL: the live dot here is genuinely live -- streams from the
+       same IoT pipeline as diagnostics. Not a polling refresh. -->
+  <div class="frame-wrap" data-screen-label="AD-07 Attendance">
+    <div class="frame-id"><strong>AD-07</strong><span>Attendance Monitor</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div style="padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4);">
+        <div class="status-banner status-banner-ok">
+          <span class="status-banner-icon"></span>
+          <span class="status-banner-text">All systems operational</span>
+          <span class="status-banner-time"><span class="live-dot"></span>Updated 6s ago</span>
+        </div>
+
+        <h2 class="section-heading">Attendance Monitor — 05 May 2026 10:00am Assessment</h2>
+
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--sp4);" id="ad07-stats">
+          <div class="stat-tile stat-tile-success"><span class="stat-tile-value">22</span><span class="stat-tile-label">Expected</span></div>
+          <div class="stat-tile stat-tile-lecturer"><span class="stat-tile-value">14</span><span class="stat-tile-label">On-campus</span></div>
+          <div class="stat-tile stat-tile-student"><span class="stat-tile-value">8</span><span class="stat-tile-label">Remote</span></div>
+          <div class="stat-tile stat-tile-warning"><span class="stat-tile-value">0</span><span class="stat-tile-label">Absent</span></div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:var(--sp1);">
+          <div style="display:grid; grid-template-columns:1.2fr 110px 110px 110px 130px 100px; gap:var(--sp3); padding:var(--sp3) var(--sp4); font-family:var(--font-retina); font-size:11px; letter-spacing:0.06em; color:var(--color-text-tertiary); text-transform:uppercase;">
+            <span>Student</span><span>Location</span><span>Headset</span><span>Status</span><span>Check-in</span><span></span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.2fr 110px 110px 110px 130px 100px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);" id="ad07-row1">
+            <div class="live-row-student"><span class="live-row-student-name">Sarah Smith</span></div>
+            <span class="badge badge-student">Remote</span>
+            <span class="live-row-id">HMD-009</span>
+            <span class="badge badge-success"><span class="status-dot dot-success"></span>Present</span>
+            <span style="display:flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span><span class="live-timestamp">09:52am · 8s ago</span></span>
+            <button class="btn btn-secondary btn-sm">Contact</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.2fr 110px 110px 110px 130px 100px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <div class="live-row-student"><span class="live-row-student-name">James Park</span></div>
+            <span class="badge badge-student">Remote</span>
+            <span class="live-row-id">HMD-014</span>
+            <span class="badge badge-success"><span class="status-dot dot-success"></span>Present</span>
+            <span style="display:flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span><span class="live-timestamp">09:55am · 5s ago</span></span>
+            <button class="btn btn-secondary btn-sm">Contact</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.2fr 110px 110px 110px 130px 100px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <div class="live-row-student"><span class="live-row-student-name">Mei Chen</span></div>
+            <span class="badge badge-lecturer">On-campus</span>
+            <span class="live-row-id">HMD-003</span>
+            <span class="badge badge-success"><span class="status-dot dot-success"></span>Present</span>
+            <span style="display:flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span><span class="live-timestamp">09:48am · 12s ago</span></span>
+            <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">--</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.2fr 110px 110px 110px 130px 100px; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <div class="live-row-student"><span class="live-row-student-name">Tom Nguyen</span></div>
+            <span class="badge badge-lecturer">On-campus</span>
+            <span class="live-row-id">HMD-022</span>
+            <span class="badge badge-success"><span class="status-dot dot-success"></span>Present</span>
+            <span style="display:flex; align-items:center; gap:var(--sp2);"><span class="live-dot"></span><span class="live-timestamp">09:50am · 9s ago</span></span>
+            <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">--</span>
+          </div>
+
+          <div style="opacity:0.55; padding:var(--sp4); text-align:center; font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; color:var(--color-text-tertiary);">...18 more students</div>
+        </div>
+      </div>
+
+      <!-- Bottom whitespace (content ~y=680), staggered right-side, vertical leaders up -->
+      <div class="callout" style="bottom:200px; right:24px; width:240px;">At-a-glance split matching Dr Brown's LC-01 dashboard -- cross-role consistency.</div>
+      <div class="leader" style="top:170px; right:244px; width:0; height:530px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" id="ad07-cb-live" style="bottom:140px; right:24px; width:240px;">Check-in status streams live -- Ruby sees absences the moment they occur.</div>
+      <div class="leader" style="top:430px; right:244px; width:0; height:330px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:80px; right:24px; width:240px;">Remote students may need prompt. On-campus handled in person.</div>
+      <div class="leader" style="top:574px; right:244px; width:0; height:246px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+  </div>
+
+
+  <!-- AD-08 -- COLLABORATION STATUS. Fleet-level view of session
+       health across all groups. Ruby monitors at fleet level, not
+       per-student level (that's Dr Brown's job on LC-05).
+       MONIL: all data here is live from the same IoT pipeline.
+       Stalled groups show warning state. Admin can't intervene
+       directly here -- that's the lecturer's domain. -->
+  <div class="frame-wrap" data-screen-label="AD-08 Collab">
+    <div class="frame-id"><strong>AD-08</strong><span>Collab Status Panel</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div style="padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4);">
+        <div class="status-banner status-banner-ok">
+          <span class="status-banner-icon"></span>
+          <span class="status-banner-text">All systems operational</span>
+          <span class="status-banner-time"><span class="live-dot"></span>Updated 3s ago</span>
+        </div>
+
+        <h2 class="section-heading">Collaboration Monitor — Active Session 00:18:32</h2>
+
+        <div class="filter-bar filter-bar-admin">
+          <button class="filter-tab active">All groups (4)</button>
+          <button class="filter-tab">Active (4)</button>
+          <button class="filter-tab">Issues (0)</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp4);">
+
+          <!-- Group A -->
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex; align-items:center; gap:var(--sp3);">
+                <div class="card-title">Group A</div>
+                <span class="badge badge-success"><span class="status-dot dot-success"></span>Active</span>
+              </div>
+              <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary);">4 members</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp2); margin-bottom:var(--sp4);">
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span>
+                <span>Sarah Smith <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(Remote)</span></span>
+                <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 3 of 5</span>
+                <span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">12s ago</span></span>
+              </div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span>
+                <span>Mei Chen <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span>
+                <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 4 of 5</span>
+                <span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">8s ago</span></span>
+              </div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span>
+                <span>J. Martinez <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span>
+                <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 4 of 5</span>
+                <span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">5s ago</span></span>
+              </div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--color-text-tertiary); opacity:0.5;"></span>
+                <span>K. Obi <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(Remote)</span></span>
+                <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 2 of 5</span>
+                <span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot dot-warning"></span><span class="live-timestamp">21s ago</span></span>
+              </div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label-row"><span>Group progress</span><span>65%</span></div>
+              <div class="progress-track"><div class="progress-fill progress-fill-success" style="width:65%;"></div></div>
+            </div>
+          </div>
+
+          <!-- Group B -->
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex; align-items:center; gap:var(--sp3);">
+                <div class="card-title">Group B</div>
+                <span class="badge badge-success"><span class="status-dot dot-success"></span>Active</span>
+              </div>
+              <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary);">4 members</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp2); margin-bottom:var(--sp4);">
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>L. Patel <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 4 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">3s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>D. Adeyemi <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 5 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">7s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>R. Tanaka <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(Remote)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 4 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">11s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>O. Lindström <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 4 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">6s ago</span></span></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label-row"><span>Group progress</span><span>72%</span></div><div class="progress-track"><div class="progress-fill progress-fill-success" style="width:72%;"></div></div></div>
+          </div>
+
+          <!-- Group C (stalled) -->
+          <div class="card" id="ad08-groupc">
+            <div class="card-header">
+              <div style="display:flex; align-items:center; gap:var(--sp3);">
+                <div class="card-title">Group C</div>
+                <span class="badge badge-warning"><span class="status-dot dot-warning"></span>1 stalled</span>
+              </div>
+              <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary);">3 members</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp2); margin-bottom:var(--sp4);">
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>Tom Nguyen <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 3 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">10s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-warning);"></span><span>P. Iversen <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(Remote)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-warning); font-weight:500;">Stalled</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot dot-warning"></span><span class="live-timestamp">2m ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>S. Okonkwo <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 2 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">14s ago</span></span></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label-row"><span>Group progress</span><span>45%</span></div><div class="progress-track"><div class="progress-fill progress-fill-warning" style="width:45%;"></div></div></div>
+          </div>
+
+          <!-- Group D -->
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex; align-items:center; gap:var(--sp3);">
+                <div class="card-title">Group D</div>
+                <span class="badge badge-success"><span class="status-dot dot-success"></span>Active</span>
+              </div>
+              <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-tertiary);">3 members</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp2); margin-bottom:var(--sp4);">
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>James Park <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(Remote)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 3 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">4s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>A. Khoury <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 3 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">9s ago</span></span></div>
+              <div style="display:grid; grid-template-columns:14px 1fr 90px 90px; gap:var(--sp3); align-items:center; font-size:var(--text-sm);"><span style="width:8px; height:8px; border-radius:50%; background:var(--color-success);"></span><span>F. Cheng <span style="color:var(--color-text-tertiary); font-family:var(--font-retina); font-size:var(--text-xs);">(On-campus)</span></span><span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">Step 3 of 5</span><span style="display:flex; align-items:center; gap:var(--sp1); justify-content:flex-end;"><span class="live-dot"></span><span class="live-timestamp">15s ago</span></span></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label-row"><span>Group progress</span><span>58%</span></div><div class="progress-track"><div class="progress-fill progress-fill-success" style="width:58%;"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stalled group indicator on left panel; park callout below it -->
+      <div class="callout" id="ad08-cb-stalled" style="top:680px; left:24px; width:240px;">Admin can see group-level issues without lecturer involvement.</div>
+      <div class="leader" style="top:600px; left:264px; width:80px;"></div>
+
+      <!-- Live data stream badge/dot; park above it -->
+      <div class="callout" style="top:260px; right:24px; width:240px;">All collaboration data streams live -- same IoT pipeline as diagnostics.</div>
+      <div class="leader" style="top:420px; right:264px; width:60px;"></div>
+
+      <!-- Fleet-level summary section at bottom; already well-placed -->
+      <div class="callout" style="bottom:200px; right:24px; width:240px;">Admin monitors session health at fleet level, not individual level.</div>
+      <div class="leader" style="bottom:130px; right:264px; width:60px;"></div>
+    </div>
+  </div>
+
+
+  <!-- AD-09 -- ACTIVITY LOGS. Combined audit trail: system events
+       and Ruby's own manual interventions logged automatically side
+       by side. Required for compliance and incident reporting.
+       MONIL: Ruby's actions are auto-logged. She doesn't manually
+       add log entries. The "Add note" action in LC-07 is separate.
+       Don't conflate the two log systems. -->
+  <div class="frame-wrap" data-screen-label="AD-09 Logs">
+    <div class="frame-id"><strong>AD-09</strong><span>Activity Logs</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link active" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div style="padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4);">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp4);">
+          <h2 class="section-heading">Activity Logs</h2>
+          <div style="display:flex; gap:var(--sp2);" id="ad09-export">
+            <button class="btn btn-secondary">Export CSV</button>
+            <button class="btn btn-secondary">Export PDF</button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp4); flex-wrap:wrap;">
+          <div class="filter-bar filter-bar-admin">
+            <button class="filter-tab active">All</button>
+            <button class="filter-tab">Firmware</button>
+            <button class="filter-tab">Connections</button>
+            <button class="filter-tab">Sessions</button>
+            <button class="filter-tab">Admin actions</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:var(--sp3);">
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; color:var(--color-text-tertiary); text-transform:uppercase;">Range</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-primary); font-weight:500;">05 May 2026</span>
+            <button class="btn btn-secondary btn-sm">Change range</button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:var(--sp1);">
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); padding:var(--sp3) var(--sp4); font-family:var(--font-retina); font-size:11px; letter-spacing:0.06em; color:var(--color-text-tertiary); text-transform:uppercase;">
+            <span>Time</span><span>Type</span><span>Actor</span><span>Event</span><span>Details</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:58am</span>
+            <span class="badge badge-success"><span class="status-dot dot-success"></span>Firmware</span>
+            <span style="font-size:var(--text-sm);">Ruby Jones</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">OTA update complete</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">HMD-009 updated to v2.4.0</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:55am</span>
+            <span class="badge badge-neutral">Session</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-tertiary);">System</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Assessment started</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">22 headsets active</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:52am</span>
+            <span class="badge badge-neutral">Connection</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-tertiary);">System</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Issue resolved</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">HMD-014 WiFi signal now 78%</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);" id="ad09-admin-row">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:48am</span>
+            <span class="badge badge-warning"><span class="status-dot dot-warning"></span>Admin action</span>
+            <span style="font-size:var(--text-sm);">Ruby Jones</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Notification sent</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">James Park: “Check your WiFi connection”</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:42am</span>
+            <span class="badge badge-critical"><span class="status-dot dot-critical"></span>Firmware</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-tertiary);">System</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Issue detected</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">HMD-009 firmware outdated v2.1.3</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">09:01am</span>
+            <span class="badge badge-warning"><span class="status-dot dot-warning"></span>Connection</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-tertiary);">System</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Issue detected</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">HMD-014 WiFi 42%</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:90px 130px 130px 1.4fr 1.4fr; gap:var(--sp3); align-items:center; padding:var(--sp3) var(--sp4); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <span class="live-row-id" style="font-size:var(--text-sm);">08:30am</span>
+            <span class="badge badge-neutral">Session</span>
+            <span style="font-size:var(--text-sm); color:var(--color-text-tertiary);">System</span>
+            <span style="font-size:var(--text-sm); font-weight:500;">Pre-assessment check initiated</span>
+            <span style="font-family:var(--font-retina); font-size:var(--text-xs); color:var(--color-text-secondary);">22 headsets pinged</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom whitespace (content ~y=750), vertical leaders up -->
+      <div class="callout" style="bottom:160px; right:24px; width:240px;">Required for compliance and incident reporting.</div>
+      <div class="leader" style="top:130px; right:244px; width:0; height:610px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:100px; left:24px; width:240px;">Ruby's manual interventions auto-logged -- full audit trail.</div>
+      <div class="leader" style="top:480px; left:144px; width:0; height:320px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <div class="callout" style="bottom:40px; left:24px; width:240px;">Automated system events alongside admin actions. Complete picture.</div>
+      <div class="leader" style="top:600px; left:144px; width:0; height:260px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+  </div>
+
+
+  <!-- AD-10 -- COMMS PANEL (ADMIN). Admin-to-student messaging.
+       Can target individual headset or broadcast to all. Messages
+       appear inside the VR environment -- student sees it without
+       removing the headset. MONIL: delivery confirmation is shown.
+       Ruby needs to know the message was received, especially for
+       remote students she can't physically check on. -->
+  <div class="frame-wrap" data-screen-label="AD-10 Comms Panel">
+    <div class="frame-id"><strong>AD-10</strong><span>Comms Panel</span><span>1280 × 900</span></div>
+    <div class="frame frame-h-900">
+      <div class="navbar navbar-admin">
+        <span class="navbar-brand">NTS</span>
+        <span class="badge badge-admin navbar-role-pill">Admin</span>
+        <div class="navbar-links">
+          <a class="navbar-link" href="#">Dashboard</a>
+          <a class="navbar-link" href="#">Diagnostics</a>
+          <a class="navbar-link" href="#">Firmware</a>
+          <a class="navbar-link" href="#">Loans</a>
+          <a class="navbar-link" href="#">Logs</a>
+        </div>
+        <span class="navbar-user">Ruby Jones</span>
+      </div>
+
+      <div style="padding:var(--sp5); display:flex; flex-direction:column; gap:var(--sp4);">
+        <h2 class="section-heading">Communications — Direct to Headset</h2>
+
+        <div style="display:grid; grid-template-columns:360px 1fr; gap:var(--sp5); align-items:start;">
+
+          <!-- Compose -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Send Notification</div></div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp4);">
+              <div class="input-wrap" id="ad10-sendto">
+                <label class="input-label">Send to</label>
+                <select class="input">
+                  <option selected="selected">HMD-014 -- James Park (Remote)</option>
+                  <option>HMD-009 -- Sarah Smith (Remote)</option>
+                  <option>All Remote students (8)</option>
+                  <option>All headsets (22)</option>
+                </select>
+              </div>
+              <div class="input-wrap">
+                <label class="input-label">Message type</label>
+                <select class="input">
+                  <option selected="selected">Connection advisory</option>
+                  <option>Firmware notice</option>
+                  <option>Pre-session check</option>
+                  <option>General notice</option>
+                </select>
+              </div>
+              <div class="input-wrap">
+                <label class="input-label">Message</label>
+                <textarea class="input" rows="3" style="resize:vertical; font-family:var(--font); line-height:1.5;">Your WiFi signal is below the required threshold. Please check your connection before the assessment begins.</textarea>
+              </div>
+              <label class="toggle-wrap" id="ad10-overlay">
+                <div class="toggle-track">
+                  <input type="checkbox" checked="checked">
+                  <span class="toggle-thumb"></span>
+                </div>
+                <span class="toggle-label">Display as in-headset overlay</span>
+              </label>
+              <button class="btn btn-admin btn-fullwidth">Send to Headset</button>
+            </div>
+          </div>
+
+          <!-- History -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Notification History</div></div>
+            <div style="display:flex; flex-direction:column; gap:var(--sp3);">
+
+              <div class="card" id="ad10-h1" style="padding:var(--sp4); border:1px solid var(--color-border); box-shadow:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp3); margin-bottom:var(--sp2); flex-wrap:wrap;">
+                  <span style="font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; color:var(--color-text-tertiary);"><span class="live-row-id">HMD-014</span> James Park · sent 09:48am</span>
+                  <div style="display:flex; gap:var(--sp2);">
+                    <span class="badge badge-success"><span class="status-dot dot-success"></span>Delivered</span>
+                    <span class="badge badge-neutral">Read 09:49am</span>
+                  </div>
+                </div>
+                <div style="font-size:var(--text-sm); color:var(--color-text-primary);">WiFi advisory</div>
+              </div>
+
+              <div class="card" style="padding:var(--sp4); border:1px solid var(--color-border); box-shadow:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp3); margin-bottom:var(--sp2); flex-wrap:wrap;">
+                  <span style="font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; color:var(--color-text-tertiary);"><span class="live-row-id">HMD-009</span> Sarah Smith · sent 09:42am</span>
+                  <div style="display:flex; gap:var(--sp2);">
+                    <span class="badge badge-success"><span class="status-dot dot-success"></span>Delivered</span>
+                    <span class="badge badge-neutral">Read 09:43am</span>
+                  </div>
+                </div>
+                <div style="font-size:var(--text-sm); color:var(--color-text-primary);">Firmware notice</div>
+              </div>
+
+              <div class="card" style="padding:var(--sp4); border:1px solid var(--color-border); box-shadow:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp3); margin-bottom:var(--sp2); flex-wrap:wrap;">
+                  <span style="font-family:var(--font-retina); font-size:var(--text-xs); letter-spacing:0.04em; color:var(--color-text-tertiary);">All headsets · sent 09:30am</span>
+                  <span class="badge badge-success"><span class="status-dot dot-success"></span>Delivered 22/22</span>
+                </div>
+                <div style="font-size:var(--text-sm); color:var(--color-text-primary);">Pre-assessment system check</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top-left callout: leave untouched (user confirmed good) -->
+      <div class="callout" style="top:340px; left:24px; width:240px;">Target individual headset or broadcast to all. Role-specific to Admin.</div>
+      <div class="leader" style="top:200px; left:124px; width:0; height:140px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+
+      <!-- VR delivery: move right of compose card to avoid overlap -->
+      <div class="callout" style="bottom:200px; left:290px; width:240px;">Message appears inside VR environment -- student sees it without removing headset.</div>
+      <div class="leader" style="bottom:228px; left:530px; width:200px;"></div>
+
+      <!-- Delivery confirmation: below sent messages content (~y=350) -->
+      <div class="callout" style="top:440px; right:24px; width:240px;">Admin confirms student received and read the notification.</div>
+      <div class="leader" style="top:340px; right:244px; width:0; height:100px; border-top:none; border-left:1px dashed var(--color-border-strong);"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- THEME TOGGLE -- reads localStorage, falls back to prefers-color-scheme.
+     Same script as every other NTS file. Don't touch it. It works. -->
+<script data-cfasync="false" src="nts_wireframes_ruby_files/email-decode.min.js"></script><script>
+  const root = document.documentElement;
+  const label = document.getElementById('theme-label');
+  function applyTheme(dark) {
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    if (label) label.textContent = dark ? 'Light mode' : 'Dark mode';
+    localStorage.setItem('nts-theme', dark ? 'dark' : 'light');
+  }
+  function toggleTheme() { applyTheme(root.getAttribute('data-theme') !== 'dark'); }
+  const saved = localStorage.getItem('nts-theme');
+  if (saved) applyTheme(saved === 'dark');
+  else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+</script>
+
+<!--
+  ============================================================
+  PART 6 HANDOFF -- RUBY JONES (ADMIN)
+  MONIL: Ruby's role is fleet management and system health,
+  not pedagogy. She doesn't care about individual student
+  performance -- that's Dr Brown's domain. She cares about
+  hardware, connectivity, and compliance. Keep that in mind
+  when deciding what information to surface on each screen.
+  ============================================================
+
+  Role accent: --color-admin (#A82020, red). Admin red ≠ critical red.
+  --color-admin is a role colour. --color-critical is severity.
+  Don't swap them. A "critical firmware issue" badge uses
+  --color-critical. Ruby's nav pill uses --color-admin.
+
+  Screens: LG-01, AD-01 through AD-10. Eleven screens total.
+  All 1280x900 except LG-01 (1280x720, centred card).
+
+  Figma framing:
+  - AD-01: TWO frames -- all-clear state (green banner, zero
+    critical tile) and issues-present state (red banner, counts > 0)
+  - AD-05: TWO frames -- pre-push state and in-progress push state
+  - AD-03: consider variants for all-healthy vs issues-present
+
+  IoT live data -- important for hi-fi implementation:
+  - Battery: .progress-track-sm bar (visual, not text). Brief says visual.
+  - Status: .status-dot + .badge pair on every row
+  - Every live data row has .live-dot (pulsing) + .live-timestamp
+  - In hi-fi: data should push or poll at reasonable interval.
+    Don't make Ruby hit refresh to see current state.
+
+  Critical implementation notes:
+  - AD-01 priority issues must be above fold. Always. Brief said it.
+  - AD-05 off-peak scheduling prevents firmware push during sessions.
+    This must actually work. Pushing firmware mid-session is catastrophic.
+  - AD-09 activity log is automatic. Ruby's manual interventions are
+    logged without her doing anything. Don't add a "save" step.
+  - AD-10 messages appear inside the VR environment. Cross-persona
+    data flow: Ruby sends → student sees in headset.
+
+  Component classes you'll need:
+  .navbar .navbar-admin
+  .btn .btn-admin .btn-primary .btn-secondary .btn-sm .btn-destructive
+  .card .card-header .card-title .card-subtitle
+  .card-alert (critical left border) .card-alert-warning (amber)
+  .badge .badge-admin .badge-success .badge-warning .badge-critical
+  .badge-student .badge-lecturer .badge-neutral
+  .status-dot .dot-success .dot-warning .dot-critical
+  .status-banner .status-banner-ok .status-banner-warn .status-banner-crit
+  .progress-wrap .progress-track .progress-fill (all variants)
+  .progress-track-sm (battery bars in IoT rows)
+  .filter-bar .filter-bar-admin .filter-tab
+  .stat-tile (all accent variants including .stat-tile-critical)
+  .live-row and all sub-classes (.live-row-id, -student, -battery, etc.)
+  .live-dot .live-timestamp
+  .headset-status and all sub-classes
+  .toggle-wrap .toggle-track .toggle-thumb (uses :has())
+  .input-wrap .input-label .input
+  ============================================================
+-->
+
+
+
+</body></html>

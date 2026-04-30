@@ -1,0 +1,942 @@
+/* ============================================================
+   NTS Design System — Group 27
+   Global stylesheet for hi-fi prototype (Part 6)
+
+   Usage: <link rel="stylesheet" href="styles.css">
+   Requires: fonts/ directory at the same path level.
+
+   WCAG 2.1 AAA throughout. Every token pairing in this file
+   has been checked. Don't introduce arbitrary hex values —
+   use the tokens, they're already verified.
+
+   Contents:
+     1.  Font faces
+     2.  Design tokens (:root + dark mode)
+     3.  Base reset
+     4.  Font variant targeting
+     5.  Buttons
+     6.  Badges + status dots
+     7.  Cards
+     8.  Progress bars
+     9.  Inputs
+     10. Toggle
+     11. Slider
+     12. Toast
+     13. Modal
+     14. Navbar
+     15. HUD panels (ST-05 VR)
+     16. Peer avatar row
+     17. Live dot
+     18. Filter bar
+     19. Stat tiles
+     20. Status banner
+     21. Student tiles (live monitor)
+     22. Live data row
+     23. Headset status
+     24. Feedback panel
+     25. Report table
+     26. Screen layout helpers
+   ============================================================ */
+
+
+/* ============================================================
+   1. FONT FACES — TX-02 (Berkeley Mono)
+   Load all of these. One missing weight and spacing collapses
+   in ways that look like layout bugs but aren't.
+   MONIL: Retina = 11px and below. Condensed = VR HUD only.
+   SemiCondensed = data tables only. Don't mix them up.
+   ============================================================ */
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Oblique.woff2') format('woff2'); font-weight:400; font-style:oblique; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Medium.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Medium-Oblique.woff2') format('woff2'); font-weight:500; font-style:oblique; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Bold.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02'; src:url('fonts/TX-02-Bold-Oblique.woff2') format('woff2'); font-weight:700; font-style:oblique; font-display:swap; }
+@font-face { font-family:'TX-02-Retina'; src:url('fonts/TX-02-Retina.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-Retina'; src:url('fonts/TX-02-Retina-Oblique.woff2') format('woff2'); font-weight:400; font-style:oblique; font-display:swap; }
+@font-face { font-family:'TX-02-Condensed'; src:url('fonts/TX-02-Condensed.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-Condensed'; src:url('fonts/TX-02-Medium-Condensed.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-Condensed'; src:url('fonts/TX-02-Bold-Condensed.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-SemiCondensed'; src:url('fonts/TX-02-SemiCondensed.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-SemiCondensed'; src:url('fonts/TX-02-Medium-SemiCondensed.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'TX-02-SemiCondensed'; src:url('fonts/TX-02-Bold-SemiCondensed.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+
+
+/* ============================================================
+   2. DESIGN TOKENS
+   All values are CSS custom properties. Never hardcode hex in
+   component styles — always use the token. Dark mode is handled
+   by [data-theme="dark"] on <body>; tokens remap automatically.
+   MONIL: --font-condensed drives the entire VR HUD.
+   --font-data is for tables. They are optically tuned for their
+   specific use case. Don't swap them.
+   ============================================================ */
+:root {
+  /* Font stacks */
+  --font:           'TX-02', 'Courier New', monospace;
+  --font-retina:    'TX-02-Retina', 'TX-02', 'Courier New', monospace;
+  --font-condensed: 'TX-02-Condensed', 'TX-02', 'Courier New', monospace;
+  --font-data:      'TX-02-SemiCondensed', 'TX-02', 'Courier New', monospace;
+
+  /* Type scale */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   17px;
+  --text-lg:   21px;
+  --text-xl:   27px;
+  --text-2xl:  35px;
+
+  /* Spacing — 8px grid */
+  --sp1:  4px;
+  --sp2:  8px;
+  --sp3:  12px;
+  --sp4:  16px;
+  --sp5:  24px;
+  --sp6:  32px;
+  --sp7:  48px;
+  --sp8:  64px;
+
+  /* Surface + border */
+  --color-bg:             #F8F8F6;
+  --color-surface:        #FFFFFF;
+  --color-surface-raised: #F2F2EF;
+  --color-border:         #DDDDD8;
+  --color-border-strong:  #AAAAAA;
+
+  /* Text */
+  --color-text-primary:   #1A1A18;
+  --color-text-secondary: #5A5A56;
+  --color-text-tertiary:  #8A8A84;
+
+  /* Persona accents */
+  --color-student:        #1A5FA8;
+  --color-student-bg:     #EBF3FC;
+  --color-lecturer:       #2D6B1F;
+  --color-lecturer-bg:    #EBF5E4;
+  --color-admin:          #A82020;
+  --color-admin-bg:       #FCEBEB;
+
+  /* Semantic colours */
+  --color-success:        #1E7A3E;
+  --color-success-bg:     #E8F5EE;
+  --color-warning:        #A85C00;
+  --color-warning-bg:     #FEF3E2;
+  --color-critical:       #A81A1A;
+  --color-critical-bg:    #FCEBEB;
+  --color-info:           #1A5FA8;
+  --color-info-bg:        #EBF3FC;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Motion */
+  --dur-fast:   150ms;
+  --dur-mid:    250ms;
+  --dur-slow:   350ms;
+  --ease-out:   cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in:    cubic-bezier(0.4, 0.0, 1.0, 1);
+  --ease-inout: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --color-bg:             #141412;
+  --color-surface:        #1E1E1C;
+  --color-surface-raised: #272724;
+  --color-border:         #333330;
+  --color-border-strong:  #4A4A46;
+  --color-text-primary:   #F0F0EC;
+  --color-text-secondary: #A8A8A2;
+  --color-text-tertiary:  #686862;
+  --color-student:        #5B9FE0;
+  --color-student-bg:     #1A2E42;
+  --color-lecturer:       #6BBF4E;
+  --color-lecturer-bg:    #1A2E1A;
+  --color-admin:          #E06060;
+  --color-admin-bg:       #2E1A1A;
+  --color-success:        #4BBF74;
+  --color-success-bg:     #132A1E;
+  --color-warning:        #E09040;
+  --color-warning-bg:     #2A1E0A;
+  --color-critical:       #E05555;
+  --color-critical-bg:    #2A1010;
+  --color-info:           #5B9FE0;
+  --color-info-bg:        #1A2E42;
+}
+
+
+/* ============================================================
+   3. BASE RESET
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  transition: background-color var(--dur-mid) var(--ease-inout),
+              color var(--dur-mid) var(--ease-inout);
+}
+
+
+/* ============================================================
+   4. FONT VARIANT TARGETING
+   Retina for small labels. Condensed for VR HUD (inherits to
+   all children — don't override per-element inside .hud-panel).
+   SemiCondensed for data table cells.
+   ============================================================ */
+.badge,
+.navbar-role-pill,
+.live-timestamp,
+.stat-tile-label,
+.filter-tab,
+.input-label,
+.feedback-col-title,
+.settings-section-title,
+.hud-panel-title,
+.hud-lock-badge { font-family: var(--font-retina); }
+
+.hud-panel,
+.hud-panel * { font-family: var(--font-condensed); }
+
+.report-table,
+.live-row,
+.live-row-id,
+.session-timer { font-family: var(--font-data); }
+
+
+/* ============================================================
+   5. BUTTONS
+   44px min-height everywhere — touch target requirement.
+   Use the persona variant that matches the current user role.
+   btn-destructive is for irreversible hardware/data actions only.
+   MONIL: one primary CTA per screen. Don't stack two persona
+   buttons. Focus ring uses persona accent — check it's visible
+   against the screen background in both light and dark mode.
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp2);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  min-height: 44px;
+  padding: 0 var(--sp5);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+.btn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.btn:disabled,
+.btn[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+.btn-primary       { background: var(--color-text-primary); color: var(--color-surface); border-color: var(--color-text-primary); }
+.btn-primary:hover { background: #2E2E2A; border-color: #2E2E2A; }
+
+.btn-secondary       { background: transparent; color: var(--color-text-primary); border-color: var(--color-border-strong); }
+.btn-secondary:hover { background: var(--color-surface-raised); }
+
+.btn-student       { background: var(--color-student); border-color: var(--color-student); color: #fff; }
+.btn-student:hover { background: #164E8C; }
+
+.btn-lecturer       { background: var(--color-lecturer); border-color: var(--color-lecturer); color: #fff; }
+.btn-lecturer:hover { background: #235617; }
+
+.btn-admin       { background: var(--color-admin); border-color: var(--color-admin); color: #fff; }
+.btn-admin:hover { background: #8C1A1A; }
+
+.btn-destructive       { background: var(--color-critical); border-color: var(--color-critical); color: #fff; }
+.btn-destructive:hover { background: #8C1414; }
+
+.btn-sm       { font-size: var(--text-xs); min-height: 32px; padding: 0 var(--sp3); }
+.btn-fullwidth { width: 100%; }
+
+
+/* ============================================================
+   6. BADGES + STATUS DOTS
+   Semantic colours only. badge-critical means something is
+   actually broken or urgent. Don't repurpose it for decoration.
+   MONIL: badge-admin, badge-lecturer, badge-student are persona
+   role pills — use the right one per persona.
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp1);
+  font-family: var(--font-retina);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: var(--sp1) var(--sp2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.badge-success  { background: var(--color-success-bg);       color: var(--color-success);        }
+.badge-warning  { background: var(--color-warning-bg);       color: var(--color-warning);        }
+.badge-critical { background: var(--color-critical-bg);      color: var(--color-critical);       }
+.badge-info     { background: var(--color-info-bg);          color: var(--color-info);           }
+.badge-neutral  { background: var(--color-surface-raised);   color: var(--color-text-secondary); }
+.badge-student  { background: var(--color-student-bg);       color: var(--color-student);        }
+.badge-lecturer { background: var(--color-lecturer-bg);      color: var(--color-lecturer);       }
+.badge-admin    { background: var(--color-admin-bg);         color: var(--color-admin);          }
+
+.status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-success  { background: var(--color-success); }
+.dot-warning  { background: var(--color-warning); }
+.dot-critical { background: var(--color-critical); }
+.dot-neutral  { background: var(--color-border-strong); }
+
+
+/* ============================================================
+   7. CARDS
+   card-alert and card-alert-warning carry semantic weight —
+   they signal priority issues in the admin and lecturer dashboards.
+   Don't use them decoratively.
+   ============================================================ */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp5);
+}
+.card-header   { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp4); }
+.card-title    { font-size: var(--text-md); font-weight: 500; letter-spacing: -0.01em; }
+.card-subtitle { font-size: var(--text-sm); color: var(--color-text-secondary); margin-top: var(--sp1); }
+
+.card-alert         { border-left: 3px solid var(--color-critical); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+.card-alert-warning { border-left: 3px solid var(--color-warning);  border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+
+
+/* ============================================================
+   8. PROGRESS BARS
+   MONIL: animate width on mount with --dur-slow --ease-inout.
+   A static progress bar reads as broken. Don't skip the animation.
+   Wrap it in prefers-reduced-motion if needed.
+   ============================================================ */
+.progress-wrap      { display: flex; flex-direction: column; gap: var(--sp1); }
+.progress-label-row { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.progress-track {
+  width: 100%; height: 8px;
+  background: var(--color-surface-raised);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-text-primary);
+  transition: width var(--dur-slow) var(--ease-inout);
+}
+.progress-fill-student  { background: var(--color-student);  }
+.progress-fill-success  { background: var(--color-success);  }
+.progress-fill-warning  { background: var(--color-warning);  }
+.progress-fill-critical { background: var(--color-critical); }
+.progress-track-sm { height: 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill { transition: none; }
+}
+
+
+/* ============================================================
+   9. INPUTS
+   44px height matches button min-height — deliberate alignment.
+   appearance:none kills browser chrome on selects. Don't remove it.
+   MONIL: don't shrink the font below --text-base inside an input.
+   iOS zooms the viewport on focus if font-size < 16px.
+   ============================================================ */
+.input-wrap  { display: flex; flex-direction: column; gap: var(--sp2); }
+.input-label { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.02em; }
+.input {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: 0 var(--sp4);
+  height: 44px;
+  width: 100%;
+  appearance: none;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.input:focus         { outline: none; border-color: var(--color-text-primary); }
+.input::placeholder  { color: var(--color-text-tertiary); }
+.input-error-msg     { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-critical); letter-spacing: 0.02em; }
+
+
+/* ============================================================
+   10. TOGGLE
+   Uses :has(input:checked) for state — no JavaScript.
+   The checkbox inside .toggle-track IS the mechanism.
+   Removing it breaks everything. Don't replace with a click handler.
+   MONIL: persona variants (.toggle-student etc.) colour the
+   checked state in the persona accent. Use the right one.
+   ============================================================ */
+.toggle-wrap  { display: flex; align-items: center; gap: var(--sp3); cursor: pointer; user-select: none; }
+.toggle-track {
+  position: relative;
+  width: 44px; height: 24px;
+  background: var(--color-border-strong);
+  border-radius: 12px;
+  flex-shrink: 0;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.toggle-track input {
+  position: absolute; opacity: 0;
+  width: 100%; height: 100%;
+  cursor: pointer; margin: 0; z-index: 1;
+}
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff; border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.toggle-track:has(input:checked) .toggle-thumb { transform: translateX(20px); }
+.toggle-track:has(input:checked)               { background: var(--color-text-primary); }
+.toggle-student:has(input:checked)             { background: var(--color-student); }
+.toggle-lecturer:has(input:checked)            { background: var(--color-lecturer); }
+.toggle-admin:has(input:checked)               { background: var(--color-admin); }
+.toggle-label { font-size: var(--text-sm); color: var(--color-text-secondary); }
+
+
+/* ============================================================
+   11. SLIDER
+   Used in LC-04 Module Manager for the practice/assessment
+   difficulty control. The checked state of this slider directly
+   affects student session behaviour in ST-05.
+   MONIL: assessment mode locks the instruction panel for ALL
+   students in that module. Make the state change feel weighty.
+   ============================================================ */
+.slider-wrap      { display: flex; flex-direction: column; gap: var(--sp2); }
+.slider-label-row {
+  display: flex; justify-content: space-between;
+  font-size: var(--text-xs); font-family: var(--font-retina);
+  color: var(--color-text-secondary);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 3px; outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--color-lecturer);
+  cursor: pointer;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-lecturer);
+}
+.slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--color-lecturer);
+  cursor: pointer;
+  border: 2px solid var(--color-surface);
+}
+.slider-value-label {
+  font-family: var(--font-retina);
+  font-size: var(--text-sm); font-weight: 500;
+  color: var(--color-lecturer);
+  align-self: flex-end;
+}
+
+
+/* ============================================================
+   12. TOAST
+   Fixed bottom-right in real use — position it in your layout code.
+   Auto-dismiss after 4s (handled by nts.js).
+   MONIL: no manual dismiss button per brief. 4s is it.
+   ============================================================ */
+.toast {
+  display: inline-flex; align-items: center; gap: var(--sp3);
+  font-size: var(--text-sm);
+  padding: var(--sp3) var(--sp4);
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  min-width: 280px; max-width: 420px;
+}
+.toast-success { background: var(--color-success-bg);  border-color: var(--color-success);  color: var(--color-success);  }
+.toast-error   { background: var(--color-critical-bg); border-color: var(--color-critical); color: var(--color-critical); }
+.toast-icon    { font-size: 16px; flex-shrink: 0; }
+.toast-msg     { flex: 1; font-weight: 500; }
+
+
+/* ============================================================
+   13. MODAL / CONFIRMATION DIALOG
+   Cancel is not optional. Any destructive or high-stakes action
+   needs a cancel path — WCAG requirement, not a nice-to-have.
+   MONIL: trap focus inside modal when open (nts.js handles this).
+   ============================================================ */
+.modal-backdrop {
+  background: rgba(26,26,24,0.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--sp5);
+  width: 100%; height: 100%;
+}
+.modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--sp6);
+  max-width: 460px; width: 100%;
+}
+.modal-title   { font-size: var(--text-md); font-weight: 500; margin-bottom: var(--sp3); }
+.modal-body    { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--sp5); line-height: 1.6; }
+.modal-actions { display: flex; gap: var(--sp3); justify-content: flex-end; }
+
+
+/* ============================================================
+   14. NAVBAR
+   56px tall, sticky top. Role pill is mandatory on every screen.
+   Persona variant adds the coloured active-link underline.
+   MONIL: don't hide the role pill on inner screens. All three
+   users need it to orient themselves after navigation transitions.
+   ============================================================ */
+.navbar {
+  display: flex; align-items: center;
+  height: 56px; padding: 0 var(--sp6);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--sp5);
+}
+.navbar-brand {
+  font-size: var(--text-sm); font-weight: 500;
+  letter-spacing: 0.05em; color: var(--color-text-primary);
+  margin-right: var(--sp4); text-decoration: none;
+}
+.navbar-role-pill {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs); font-weight: 500;
+  padding: var(--sp1) var(--sp3);
+  border-radius: 100px; letter-spacing: 0.04em;
+}
+.navbar-links { display: flex; gap: var(--sp1); flex: 1; }
+.navbar-link {
+  font-size: var(--text-sm); color: var(--color-text-secondary);
+  text-decoration: none; padding: var(--sp2) var(--sp3);
+  border-radius: var(--radius-md); letter-spacing: 0.02em;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.navbar-link:hover  { background: var(--color-surface-raised); color: var(--color-text-primary); }
+.navbar-link.active { background: var(--color-surface-raised); color: var(--color-text-primary); font-weight: 500; }
+.navbar-student  .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-student);  }
+.navbar-lecturer .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-lecturer); }
+.navbar-admin    .navbar-link.active { box-shadow: inset 0 -2px 0 var(--color-admin);    }
+.navbar-user { margin-left: auto; font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+
+/* ============================================================
+   15. HUD PANELS (ST-05 VR in-session only)
+   backdrop-filter: blur(4px) requires browser support — the
+   semi-opaque background is the fallback, already defined here.
+   MONIL: verify backdrop-filter works in the target VR browser.
+   Every child inherits --font-condensed via the font targeting
+   rule above. Don't override it per-element inside .hud-panel.
+   ============================================================ */
+.hud-panel {
+  background: rgba(26, 26, 24, 0.82);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-lg);
+  padding: var(--sp4);
+  color: #F8F8F6;
+  font-size: var(--text-sm);
+  backdrop-filter: blur(4px);
+}
+.hud-panel-title {
+  font-family: var(--font-condensed);
+  font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: var(--sp3);
+}
+.hud-progress .progress-track { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.1); }
+.hud-progress .progress-fill  { background: #FFFFFF; }
+.hud-lock-badge {
+  display: inline-flex; align-items: center; gap: var(--sp1);
+  font-family: var(--font-condensed);
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.5); letter-spacing: 0.04em;
+  margin-top: var(--sp2);
+}
+
+/* HUD exit button — lives in the dark VR environment */
+.btn-hud-exit {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md);
+  font-family: var(--font-retina);
+  font-size: 11px; letter-spacing: 0.04em;
+  padding: 6px 12px; cursor: pointer; min-height: 30px;
+}
+.observer-mode-badge {
+  background: rgba(232,144,64,0.15); border: 1px solid rgba(232,144,64,0.5);
+  color: #E09040; padding: 4px 8px; border-radius: var(--radius-sm);
+  font-size: 11px; font-family: var(--font-retina); letter-spacing: 0.04em;
+}
+
+
+/* ============================================================
+   16. PEER AVATAR ROW (ST-05 presence panel)
+   Audio bars animate by default. prefers-reduced-motion makes
+   them static — don't remove them entirely, the bars still
+   convey presence even when not animating.
+   MONIL: the HUD override block below flips colours for the
+   dark VR background. Don't fix HUD display by touching the
+   base peer-row colours.
+   ============================================================ */
+.peer-row { display: flex; flex-direction: column; gap: var(--sp2); }
+.peer-item { display: flex; align-items: center; gap: var(--sp3); }
+.peer-avatar {
+  position: relative; width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-xs); font-weight: 500;
+  color: var(--color-text-secondary);
+  flex-shrink: 0; text-transform: uppercase;
+}
+.peer-avatar-dot {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 2px solid var(--color-surface);
+}
+.peer-avatar-dot-active  { background: var(--color-success); }
+.peer-avatar-dot-muted   { background: var(--color-warning); }
+.peer-avatar-dot-offline { background: var(--color-border-strong); }
+.peer-info   { display: flex; flex-direction: column; gap: 2px; }
+.peer-name   { font-size: var(--text-sm); font-weight: 500; }
+.peer-status { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); }
+.peer-audio  { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.peer-audio-bar {
+  width: 3px; border-radius: 2px; background: var(--color-success);
+  animation: audio-pulse 0.8s ease-in-out infinite alternate;
+}
+.peer-audio-bar:nth-child(1) { height: 8px;  animation-delay: 0s; }
+.peer-audio-bar:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+.peer-audio-bar:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+@keyframes audio-pulse { from { opacity: 0.3; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .peer-audio-bar { animation: none; opacity: 1; } }
+
+/* Dark HUD overrides — scoped, don't bleed into base peer-row */
+.hud-panel .peer-avatar  { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); }
+.hud-panel .peer-avatar-dot { border-color: #1a1a18; }
+.hud-panel .peer-name    { color: #F8F8F6; }
+.hud-panel .peer-status  { color: rgba(255,255,255,0.5); }
+
+
+/* ============================================================
+   17. LIVE DOT
+   Pulsing green indicator for live data / active sessions.
+   Colour variants: default (success), warning, critical.
+   MONIL: don't remove in reduced-motion mode — it still conveys
+   "live" even when static. Just kill the animation.
+   ============================================================ */
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.live-dot.dot-warning  { background: var(--color-warning);  }
+.live-dot.dot-critical { background: var(--color-critical); }
+.live-timestamp { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); letter-spacing: 0.04em; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+
+/* ============================================================
+   18. FILTER BAR
+   Segmented control — not a tab bar (tabs imply navigation).
+   Active state is a box-shadow lift + persona accent text colour.
+   Client-side filtering only — don't re-fetch on tab switch.
+   ============================================================ */
+.filter-bar {
+  display: flex; gap: var(--sp1);
+  background: var(--color-surface-raised);
+  padding: var(--sp1); border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  width: fit-content;
+}
+.filter-tab {
+  font-family: var(--font-retina);
+  font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: var(--sp2) var(--sp3);
+  border-radius: var(--radius-md);
+  border: none; background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.filter-tab.active { background: var(--color-surface); color: var(--color-text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.filter-bar-student  .filter-tab.active { color: var(--color-student);  }
+.filter-bar-lecturer .filter-tab.active { color: var(--color-lecturer); }
+.filter-bar-admin    .filter-tab.active { color: var(--color-admin);    }
+
+
+/* ============================================================
+   19. STAT TILES
+   Large number, small label, 3px top accent border.
+   MONIL: --text-2xl is 35px — don't let the value wrap or
+   truncate. One number per tile, always.
+   stat-tile-critical turns the value text red when > 0.
+   That's the token doing the work, not a separate class.
+   ============================================================ */
+.stat-tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp5);
+  display: flex; flex-direction: column; gap: var(--sp2);
+  min-width: 140px;
+}
+.stat-tile-value { font-size: var(--text-2xl); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
+.stat-tile-label { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); letter-spacing: 0.05em; text-transform: uppercase; }
+.stat-tile-student  { border-top: 3px solid var(--color-student);  }
+.stat-tile-lecturer { border-top: 3px solid var(--color-lecturer); }
+.stat-tile-admin    { border-top: 3px solid var(--color-admin);    }
+.stat-tile-success  { border-top: 3px solid var(--color-success);  }
+.stat-tile-warning  { border-top: 3px solid var(--color-warning);  }
+.stat-tile-critical { border-top: 3px solid var(--color-critical); }
+.stat-tile-critical .stat-tile-value { color: var(--color-critical); }
+
+
+/* ============================================================
+   20. STATUS BANNER (admin dashboard, AD-01)
+   Full-width system health indicator. Three states: ok, warn, crit.
+   The all-clear state (ok) is just as important as the alert states —
+   Ruby needs to know there are zero issues, not just see nothing.
+   ============================================================ */
+.status-banner {
+  display: flex; align-items: center; gap: var(--sp3);
+  padding: var(--sp3) var(--sp5);
+  border-radius: var(--radius-lg); border: 1px solid;
+}
+.status-banner-ok   { background: var(--color-success-bg);  border-color: var(--color-success);  color: var(--color-success);  }
+.status-banner-warn { background: var(--color-warning-bg);  border-color: var(--color-warning);  color: var(--color-warning);  }
+.status-banner-crit { background: var(--color-critical-bg); border-color: var(--color-critical); color: var(--color-critical); }
+.status-banner-icon { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; background: currentColor; }
+.status-banner-text { font-size: var(--text-sm); font-weight: 500; flex: 1; }
+.status-banner-time { font-family: var(--font-retina); font-size: var(--text-xs); letter-spacing: 0.04em; opacity: 0.85; display: flex; align-items: center; gap: var(--sp2); }
+
+
+/* ============================================================
+   21. STUDENT TILES (LC-05 live monitor)
+   Three states: on-track, stalled, flagged.
+   MONIL: the colour states need to be immediately readable across
+   22 tiles simultaneously. Don't make them subtle.
+   "Join" on a flagged tile opens the LC-06 confirmation dialog —
+   don't skip that step. Joining a student's session is a
+   high-stakes intervention.
+   ============================================================ */
+.student-tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp4);
+  display: flex; flex-direction: column; gap: var(--sp3);
+  position: relative;
+}
+.student-tile-on-track { border-left: 4px solid var(--color-success);   }
+.student-tile-stalled  { border-left: 4px solid var(--color-warning);  background: var(--color-warning-bg);  }
+.student-tile-flagged  { border-left: 4px solid var(--color-critical); background: var(--color-critical-bg); }
+.student-tile-header   { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp2); }
+.student-tile-name     { font-size: var(--text-sm); font-weight: 500; }
+.student-tile-meta     { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 2px; letter-spacing: 0.03em; }
+.student-tile-actions  { display: flex; gap: var(--sp2); margin-top: var(--sp2); }
+
+
+/* ============================================================
+   22. LIVE DATA ROW (AD-03 diagnostics table)
+   7-column IoT data grid. Uses --font-data for compact layout.
+   Battery is a visual bar, not a number — brief requirement.
+   MONIL: whole row background changes on critical status.
+   Don't just badge it — the entire row needs to read as urgent.
+   ============================================================ */
+.live-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 110px 110px 100px 110px 90px;
+  gap: var(--sp4); align-items: center;
+  padding: var(--sp3) var(--sp4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-data);
+  font-size: var(--text-sm); cursor: pointer;
+}
+.live-row.is-critical { border-left: 3px solid var(--color-critical); }
+.live-row.is-warning  { border-left: 3px solid var(--color-warning);  }
+.live-row-id           { font-weight: 500; letter-spacing: 0.04em; }
+.live-row-student      { display: flex; flex-direction: column; gap: 2px; font-family: var(--font); }
+.live-row-student-name { font-weight: 500; font-size: var(--text-sm); }
+.live-row-student-meta { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); letter-spacing: 0.03em; }
+.live-row-battery      { display: flex; flex-direction: column; gap: 3px; }
+.live-row-battery-label{ font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.live-row-conn         { display: flex; align-items: center; gap: var(--sp2); }
+.live-row-live         { display: flex; align-items: center; gap: var(--sp2); justify-content: flex-end; }
+
+
+/* ============================================================
+   23. HEADSET STATUS (ST-01 sidebar widget)
+   Shows battery, firmware version, and connection state.
+   MONIL: three distinct states — connected/healthy,
+   connected/warning (firmware outdated), and disconnected.
+   Don't flatten to two. The firmware warning is a separate
+   visual condition and it matters.
+   ============================================================ */
+.headset-status {
+  display: flex; flex-direction: column; gap: var(--sp3);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp4);
+}
+.headset-status-header { display: flex; align-items: center; justify-content: space-between; }
+.headset-status-title  {
+  font-family: var(--font-retina); font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary);
+}
+.headset-status-row {
+  display: grid; grid-template-columns: 140px 1fr;
+  gap: var(--sp4); padding: var(--sp3) 0;
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+}
+.headset-status-row:last-child   { border-bottom: none; }
+.headset-status-label { font-family: var(--font-retina); font-size: var(--text-xs); letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.headset-status-value { display: flex; align-items: center; gap: var(--sp2); font-size: var(--text-sm); }
+
+
+/* ============================================================
+   24. FEEDBACK PANEL (ST-06 + LC-07)
+   Two-column grid: missed steps (warning border) left,
+   positives (success border) right.
+   MONIL: lecturer adds notes in LC-07; student sees them in
+   ST-06. Same data, two views. Don't decouple the data model
+   or the feedback loop breaks.
+   Don't show ST-06 until session is fully submitted — partial
+   feedback mid-session is out of scope.
+   ============================================================ */
+.feedback-panel     { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp5); }
+.feedback-col       { display: flex; flex-direction: column; gap: var(--sp3); }
+.feedback-col-header{ display: flex; align-items: center; gap: var(--sp2); padding-bottom: var(--sp2); border-bottom: 1px solid var(--color-border); }
+.feedback-col-title {
+  font-family: var(--font-retina); font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary);
+}
+.feedback-item {
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--sp3) var(--sp4);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  border-left: 3px solid var(--color-border);
+}
+.feedback-item-missed   { border-left-color: var(--color-warning); }
+.feedback-item-positive { border-left-color: var(--color-success); }
+.feedback-empty { font-size: var(--text-sm); color: var(--color-text-tertiary); font-style: oblique; padding: var(--sp3) 0; }
+.feedback-score { font-size: var(--text-lg); font-weight: 500; margin-bottom: var(--sp4); }
+.feedback-score span { font-size: var(--text-base); color: var(--color-text-tertiary); font-weight: 400; }
+
+
+/* ============================================================
+   25. REPORT TABLE (LC-02, LC-07)
+   Uses --font-data (SemiCondensed) for compact rows.
+   MONIL: don't swap to --font here. The rows won't fit at 1280px.
+   ============================================================ */
+.report-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-family: var(--font-data); }
+.report-table thead th {
+  font-family: var(--font-retina); font-size: var(--text-xs);
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  text-align: left; padding: var(--sp3);
+  border-bottom: 1px solid var(--color-border-strong);
+  font-weight: 500;
+}
+.report-table tbody td  { padding: var(--sp3); border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+.report-table tbody tr:last-child td { border-bottom: none; }
+
+
+/* ============================================================
+   26. SCREEN LAYOUT HELPERS
+   Grid and layout classes specific to individual screens.
+   Use as-is or adapt to your framework's layout system.
+   ============================================================ */
+
+/* ST-01 — two-column dashboard: 280px sidebar, flexible content */
+.st01-grid { display: grid; grid-template-columns: 280px 1fr; gap: var(--sp5); padding: var(--sp5); }
+.st01-section-heading { font-size: var(--text-md); font-weight: 500; margin-bottom: var(--sp4); letter-spacing: -0.01em; }
+.module-card-grid { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: var(--sp4); }
+.module-card-meta  { display: flex; flex-direction: column; gap: var(--sp1); }
+.module-card-title { font-size: var(--text-md); font-weight: 500; }
+.module-card-sub   { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); letter-spacing: 0.03em; }
+
+/* LC-01 / AD-01 — dashboard stat row */
+.stat-row        { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp4); }
+.quick-links-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp3); }
+.section-heading { font-size: var(--text-md); font-weight: 500; letter-spacing: -0.01em; display: flex; align-items: center; gap: var(--sp3); }
+
+/* LC-02 — student list row */
+.student-row { display: grid; grid-template-columns: 1fr 110px 240px auto auto; align-items: center; gap: var(--sp4); padding: var(--sp4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+
+/* LC-04 — two-panel module manager */
+.lc04-grid { display: grid; grid-template-columns: 380px 1fr; gap: var(--sp5); padding: var(--sp5); }
+.module-list-item          { padding: var(--sp3) var(--sp4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); margin-bottom: var(--sp2); cursor: pointer; }
+.module-list-item.selected { border-left: 3px solid var(--color-lecturer); background: var(--color-lecturer-bg); }
+.module-list-item-title    { font-size: var(--text-sm); font-weight: 500; }
+.module-list-item-meta     { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 2px; letter-spacing: 0.03em; }
+.settings-section          { display: flex; flex-direction: column; gap: var(--sp3); padding: var(--sp4) 0; border-bottom: 1px solid var(--color-border); }
+.settings-section:last-of-type { border-bottom: none; }
+.settings-section-title    { font-family: var(--font-retina); font-size: var(--text-xs); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.input-grid-2              { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp4); }
+
+/* LC-05 — live monitor tile grid */
+.tile-grid    { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp4); }
+.session-timer { display: flex; align-items: center; gap: var(--sp2); font-family: var(--font-data); font-size: var(--text-lg); font-weight: 500; letter-spacing: 0.04em; }
+
+/* AD-02 — issue table */
+.issue-row    { display: grid; grid-template-columns: 120px 110px 1fr 1.5fr 110px 360px; gap: var(--sp3); align-items: center; padding: var(--sp3) var(--sp4); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+.issue-row:last-child { border-bottom: none; }
+.issue-actions { display: flex; gap: var(--sp1); }
+
+/* AD-04 — headset detail */
+.ad04-grid    { display: grid; grid-template-columns: 1fr 380px; gap: var(--sp5); }
+.activity-row { display: grid; grid-template-columns: 160px 1fr; gap: var(--sp4); padding: var(--sp3) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+.activity-row:last-child { border-bottom: none; }
+.activity-time { font-family: var(--font-retina); font-size: var(--text-xs); color: var(--color-text-tertiary); letter-spacing: 0.04em; }
+
+/* AD-05 — firmware manager */
+.ad05-split   { display: grid; grid-template-columns: 480px 1fr; gap: var(--sp5); }
+.fw-list-row  { display: grid; grid-template-columns: 24px 90px 1fr auto auto; gap: var(--sp3); align-items: center; padding: var(--sp3) var(--sp4); border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: var(--sp2); background: var(--color-surface); }
+.fw-progress-row { display: grid; grid-template-columns: 90px 1fr 60px; gap: var(--sp3); align-items: center; padding: var(--sp3) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+.fw-progress-row:last-child { border-bottom: none; }
+
+/* AD-06 — loan table */
+.loan-row     { display: grid; grid-template-columns: 1.2fr 100px 110px 130px 130px 130px 110px; gap: var(--sp3); align-items: center; padding: var(--sp3) var(--sp4); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+.loan-row:last-child { border-bottom: none; }

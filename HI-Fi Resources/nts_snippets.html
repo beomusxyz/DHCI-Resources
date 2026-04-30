@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTS Component Snippets — Group 27</title>
+<link rel="stylesheet" href="styles.css">
+<script src="nts.js" defer></script>
+<style>
+/* Snippet page chrome only — none of this ships */
+body { padding: 48px 64px; }
+.page-title { font-size: 27px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 8px; }
+.page-sub   { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 64px; font-family: var(--font-retina); letter-spacing: 0.04em; }
+.snippet-section { margin-bottom: 64px; }
+.snippet-label  { font-family: var(--font-retina); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border); }
+.snippet-row    { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.snippet-block  { margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<button data-nts-toggle-theme style="float:right; font-family:var(--font-retina); font-size:11px; letter-spacing:0.06em; background:var(--color-surface); color:var(--color-text-secondary); border:1px solid var(--color-border-strong); border-radius:6px; padding:8px 16px; cursor:pointer;">
+  <span id="theme-label">Dark mode</span>
+</button>
+
+<div class="page-title">NTS Component Snippets</div>
+<div class="page-sub">Group 27 — copy-paste markup for hi-fi prototype. Requires styles.css + nts.js.</div>
+
+
+<!-- ============================================================
+     BUTTONS
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Buttons</div>
+  <div class="snippet-row">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-student">Student action</button>
+    <button class="btn btn-lecturer">Lecturer action</button>
+    <button class="btn btn-admin">Admin action</button>
+    <button class="btn btn-destructive">Destructive</button>
+  </div>
+  <div class="snippet-row">
+    <button class="btn btn-student btn-sm">Small student</button>
+    <button class="btn btn-lecturer btn-sm">Small lecturer</button>
+    <button class="btn btn-admin btn-sm">Small admin</button>
+    <button class="btn btn-secondary btn-sm">Small secondary</button>
+  </div>
+  <div class="snippet-block">
+    <button class="btn btn-student btn-fullwidth">Full-width (one per screen)</button>
+  </div>
+  <div class="snippet-row">
+    <button class="btn btn-student" disabled>Disabled</button>
+    <button class="btn btn-primary" aria-disabled="true">Aria-disabled</button>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BADGES + STATUS DOTS
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Badges</div>
+  <div class="snippet-row">
+    <span class="badge badge-success">Online</span>
+    <span class="badge badge-warning">Stalled</span>
+    <span class="badge badge-critical">Flagged</span>
+    <span class="badge badge-info">Info</span>
+    <span class="badge badge-neutral">Neutral</span>
+    <span class="badge badge-student">Student</span>
+    <span class="badge badge-lecturer">Lecturer</span>
+    <span class="badge badge-admin">Admin</span>
+  </div>
+  <div class="snippet-row">
+    <span class="badge badge-success"><span class="status-dot dot-success"></span> Active</span>
+    <span class="badge badge-warning"><span class="status-dot dot-warning"></span> Stalled</span>
+    <span class="badge badge-critical"><span class="status-dot dot-critical"></span> Critical</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     CARDS
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Cards</div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:900px;">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Base card</span>
+        <span class="badge badge-neutral">Label</span>
+      </div>
+      <div class="card-subtitle">Secondary information goes here.</div>
+    </div>
+
+    <div class="card card-alert">
+      <div class="card-header">
+        <span class="card-title">Critical alert</span>
+        <span class="badge badge-critical">Urgent</span>
+      </div>
+      <div class="card-subtitle">Use for actual critical issues only.</div>
+    </div>
+
+    <div class="card card-alert-warning">
+      <div class="card-header">
+        <span class="card-title">Warning alert</span>
+        <span class="badge badge-warning">Attention</span>
+      </div>
+      <div class="card-subtitle">Amber border — needs attention, not urgent.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PROGRESS BARS
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Progress bars</div>
+  <div style="display:flex; flex-direction:column; gap:16px; max-width:400px;">
+
+    <div class="progress-wrap">
+      <div class="progress-label-row"><span>Module 3 — Cardiac Care</span><span>68%</span></div>
+      <div class="progress-track"><div class="progress-fill progress-fill-student" style="width:68%"></div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label-row"><span>Session completion</span><span>100%</span></div>
+      <div class="progress-track"><div class="progress-fill progress-fill-success" style="width:100%"></div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label-row"><span>Battery</span><span>23%</span></div>
+      <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-warning" style="width:23%"></div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label-row"><span>Critical battery</span><span>8%</span></div>
+      <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-critical" style="width:8%"></div></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     INPUTS
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Inputs</div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:900px;">
+
+    <div class="input-wrap">
+      <label class="input-label">University email</label>
+      <input class="input" type="email" placeholder="s.smith@university.ac.uk">
+    </div>
+
+    <div class="input-wrap">
+      <label class="input-label">Password</label>
+      <input class="input" type="password" placeholder="••••••••">
+    </div>
+
+    <div class="input-wrap">
+      <label class="input-label">Search students</label>
+      <input class="input" type="search" placeholder="Name or ID…">
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     TOGGLE
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Toggle — CSS :has() only, no JavaScript</div>
+  <div style="display:flex; flex-direction:column; gap:12px;">
+
+    <label class="toggle-wrap">
+      <div class="toggle-track toggle-student">
+        <input type="checkbox">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label">Offline mode (student)</span>
+    </label>
+
+    <label class="toggle-wrap">
+      <div class="toggle-track toggle-lecturer">
+        <input type="checkbox" checked>
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label">Assessment mode (lecturer, checked)</span>
+    </label>
+
+    <label class="toggle-wrap">
+      <div class="toggle-track toggle-admin">
+        <input type="checkbox">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label">Maintenance lock (admin)</span>
+    </label>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     FILTER BAR
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Filter bar (segmented control)</div>
+  <div style="display:flex; flex-direction:column; gap:12px;">
+
+    <div class="filter-bar filter-bar-student">
+      <button class="filter-tab active">All</button>
+      <button class="filter-tab">In Progress</button>
+      <button class="filter-tab">Available</button>
+      <button class="filter-tab">Completed</button>
+    </div>
+
+    <div class="filter-bar filter-bar-lecturer">
+      <button class="filter-tab active">All Students</button>
+      <button class="filter-tab">On Campus</button>
+      <button class="filter-tab">Remote</button>
+    </div>
+
+    <div class="filter-bar filter-bar-admin">
+      <button class="filter-tab active">All Issues</button>
+      <button class="filter-tab">Critical</button>
+      <button class="filter-tab">Warning</button>
+      <button class="filter-tab">Resolved</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STAT TILES
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Stat tiles</div>
+  <div class="snippet-row" style="align-items:stretch;">
+    <div class="stat-tile stat-tile-student"><span class="stat-tile-value">4</span><span class="stat-tile-label">In Progress</span></div>
+    <div class="stat-tile stat-tile-success"><span class="stat-tile-value">12</span><span class="stat-tile-label">Completed</span></div>
+    <div class="stat-tile stat-tile-warning"><span class="stat-tile-value">2</span><span class="stat-tile-label">Stalled</span></div>
+    <div class="stat-tile stat-tile-critical"><span class="stat-tile-value">3</span><span class="stat-tile-label">Critical</span></div>
+    <div class="stat-tile stat-tile-lecturer"><span class="stat-tile-value">22</span><span class="stat-tile-label">Students</span></div>
+    <div class="stat-tile stat-tile-admin"><span class="stat-tile-value">47</span><span class="stat-tile-label">Headsets</span></div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATUS BANNER (admin)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Status banner (AD-01)</div>
+  <div style="display:flex; flex-direction:column; gap:8px; max-width:800px;">
+
+    <div class="status-banner status-banner-ok">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">All systems operational</span>
+      <span class="status-banner-time"><div class="live-dot"></div> Updated 2 min ago</span>
+    </div>
+
+    <div class="status-banner status-banner-warn">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">2 headsets require firmware update</span>
+      <span class="status-banner-time"><div class="live-dot dot-warning"></div> Updated 1 min ago</span>
+    </div>
+
+    <div class="status-banner status-banner-crit">
+      <div class="status-banner-icon"></div>
+      <span class="status-banner-text">3 headsets offline during active session</span>
+      <span class="status-banner-time"><div class="live-dot dot-critical"></div> Updated just now</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STUDENT TILES (live monitor, LC-05)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Student tiles — LC-05 live monitor</div>
+  <div class="tile-grid" style="max-width:900px;">
+
+    <div class="student-tile student-tile-on-track">
+      <div class="student-tile-header">
+        <div>
+          <div class="student-tile-name">Sarah Smith</div>
+          <div class="student-tile-meta">Module 3 — Step 4 of 12</div>
+        </div>
+        <span class="badge badge-success">On track</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-success" style="width:33%"></div></div>
+      </div>
+      <div class="student-tile-actions">
+        <button class="btn btn-secondary btn-sm">Message</button>
+      </div>
+    </div>
+
+    <div class="student-tile student-tile-stalled">
+      <div class="student-tile-header">
+        <div>
+          <div class="student-tile-name">James Okafor</div>
+          <div class="student-tile-meta">Module 3 — Step 4 of 12 · 4m idle</div>
+        </div>
+        <span class="badge badge-warning">Stalled</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-warning" style="width:33%"></div></div>
+      </div>
+      <div class="student-tile-actions">
+        <button class="btn btn-secondary btn-sm">Message</button>
+        <button class="btn btn-lecturer btn-sm">Join</button>
+      </div>
+    </div>
+
+    <div class="student-tile student-tile-flagged">
+      <div class="student-tile-header">
+        <div>
+          <div class="student-tile-name">Priya Mehta</div>
+          <div class="student-tile-meta">Module 3 — Step 2 of 12 · Flagged</div>
+        </div>
+        <span class="badge badge-critical">Flagged</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-critical" style="width:16%"></div></div>
+      </div>
+      <div class="student-tile-actions">
+        <button class="btn btn-secondary btn-sm">Message</button>
+        <button class="btn btn-lecturer btn-sm">Join</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     TOAST (triggered via JS)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Toast notifications — NTS.toast(message, type)</div>
+  <div class="snippet-row">
+    <button class="btn btn-secondary" onclick="NTS.toast('Firmware update scheduled for 02:00', 'success', '✓')">Show success toast</button>
+    <button class="btn btn-secondary" onclick="NTS.toast('Connection lost — retrying…', 'error', '✕')">Show error toast</button>
+  </div>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin-top:8px;">Auto-dismisses after 4s. No manual close per brief.</p>
+</div>
+
+
+<!-- ============================================================
+     MODAL
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Modal — focus trap via NTS.openModal()</div>
+  <button class="btn btn-secondary" data-nts-modal-open="demo-modal">Open confirmation modal</button>
+
+  <div id="demo-modal" style="display:none; position:fixed; inset:0; z-index:100;">
+    <div class="modal-backdrop" style="position:absolute; inset:0;" onclick="NTS.closeModal()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-title">Confirm action</div>
+        <div class="modal-body">
+          This action cannot be undone. Tab cycles within this modal.
+          Press Escape or Cancel to close.
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" data-nts-modal-close>Cancel</button>
+          <button class="btn btn-destructive">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show modal element when opened
+    document.querySelector('[data-nts-modal-open="demo-modal"]').addEventListener('click', () => {
+      document.getElementById('demo-modal').style.display = 'block';
+      NTS.openModal(document.querySelector('#demo-modal .modal'));
+    });
+    document.querySelector('[data-nts-modal-close]').addEventListener('click', () => {
+      document.getElementById('demo-modal').style.display = 'none';
+    });
+  </script>
+</div>
+
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Navbar — persona variants</div>
+  <div style="display:flex; flex-direction:column; gap:8px;">
+
+    <div class="navbar navbar-student">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-student navbar-role-pill">Student</span>
+      <nav class="navbar-links">
+        <a class="navbar-link active" href="#">Dashboard</a>
+        <a class="navbar-link" href="#">Modules</a>
+        <a class="navbar-link" href="#">Sessions</a>
+      </nav>
+      <span class="navbar-user">Sarah Smith</span>
+    </div>
+
+    <div class="navbar navbar-lecturer">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-lecturer navbar-role-pill">Lecturer</span>
+      <nav class="navbar-links">
+        <a class="navbar-link active" href="#">Dashboard</a>
+        <a class="navbar-link" href="#">Students</a>
+        <a class="navbar-link" href="#">Modules</a>
+        <a class="navbar-link" href="#">Monitor</a>
+        <a class="navbar-link" href="#">Reports</a>
+      </nav>
+      <span class="navbar-user">Dr Michael Brown</span>
+    </div>
+
+    <div class="navbar navbar-admin">
+      <span class="navbar-brand">NTS</span>
+      <span class="badge badge-admin navbar-role-pill">Admin</span>
+      <nav class="navbar-links">
+        <a class="navbar-link active" href="#">Dashboard</a>
+        <a class="navbar-link" href="#">Issues</a>
+        <a class="navbar-link" href="#">Diagnostics</a>
+        <a class="navbar-link" href="#">Firmware</a>
+        <a class="navbar-link" href="#">Loans</a>
+      </nav>
+      <span class="navbar-user">Ruby Jones</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     HUD PANEL (ST-05 VR in-session)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">HUD panel — ST-05 VR in-session (dark background required)</div>
+  <div style="background:#1a1a18; padding:32px; border-radius:10px; display:flex; gap:16px; flex-wrap:wrap;">
+
+    <div class="hud-panel" style="width:200px;">
+      <div class="hud-panel-title">Session Progress</div>
+      <div class="hud-progress progress-wrap">
+        <div class="progress-label-row"><span>Step 4 of 12</span><span>33%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:33%"></div></div>
+      </div>
+      <div class="hud-lock-badge">Instructions locked</div>
+    </div>
+
+    <div class="hud-panel" style="width:200px;">
+      <div class="hud-panel-title">Peers</div>
+      <div class="peer-row">
+        <div class="peer-item">
+          <div class="peer-avatar">JS<div class="peer-avatar-dot peer-avatar-dot-active"></div></div>
+          <div class="peer-info">
+            <div class="peer-name">J. Singh</div>
+            <div class="peer-status">Active</div>
+          </div>
+          <div class="peer-audio">
+            <div class="peer-audio-bar"></div>
+            <div class="peer-audio-bar"></div>
+            <div class="peer-audio-bar"></div>
+          </div>
+        </div>
+        <div class="peer-item">
+          <div class="peer-avatar">PL<div class="peer-avatar-dot peer-avatar-dot-muted"></div></div>
+          <div class="peer-info">
+            <div class="peer-name">P. Lowe</div>
+            <div class="peer-status">Muted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     FEEDBACK PANEL (ST-06)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Feedback panel — ST-06 post-session</div>
+  <div style="max-width:800px;">
+    <div class="feedback-score">Score: 74% <span>/ 100%</span></div>
+    <div class="feedback-panel">
+      <div class="feedback-col">
+        <div class="feedback-col-header">
+          <div class="feedback-col-title">Missed steps</div>
+        </div>
+        <div class="feedback-item feedback-item-missed">Airway assessment not completed before administering oxygen.</div>
+        <div class="feedback-item feedback-item-missed">Patient identity check skipped at step 2.</div>
+      </div>
+      <div class="feedback-col">
+        <div class="feedback-col-header">
+          <div class="feedback-col-title">Positives</div>
+        </div>
+        <div class="feedback-item feedback-item-positive">Correct PPE selected and applied before patient contact.</div>
+        <div class="feedback-item feedback-item-positive">Medication dosage calculated correctly.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     LIVE DATA ROW (AD-03 diagnostics)
+============================================================ -->
+<div class="snippet-section">
+  <div class="snippet-label">Live data row — AD-03 diagnostics table</div>
+  <div style="display:flex; flex-direction:column; gap:4px; max-width:1100px;">
+
+    <div class="live-row">
+      <span class="live-row-id">HMD-012</span>
+      <div class="live-row-student"><span class="live-row-student-name">Sarah Smith</span><span class="live-row-student-meta">Group A · Remote</span></div>
+      <span class="badge badge-success">v2.4.1</span>
+      <div class="live-row-battery"><span class="live-row-battery-label">78%</span><div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-success" style="width:78%"></div></div></div>
+      <span class="badge badge-success"><span class="status-dot dot-success"></span> Online</span>
+      <div class="live-row-live"><div class="live-dot"></div><span class="live-timestamp">Just now</span></div>
+      <button class="btn btn-secondary btn-sm">Detail</button>
+    </div>
+
+    <div class="live-row is-warning">
+      <span class="live-row-id">HMD-007</span>
+      <div class="live-row-student"><span class="live-row-student-name">James Okafor</span><span class="live-row-student-meta">Group B · Remote</span></div>
+      <span class="badge badge-warning">v2.3.0</span>
+      <div class="live-row-battery"><span class="live-row-battery-label">21%</span><div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-warning" style="width:21%"></div></div></div>
+      <span class="badge badge-warning"><span class="status-dot dot-warning"></span> Low battery</span>
+      <div class="live-row-live"><div class="live-dot dot-warning"></div><span class="live-timestamp">3 min ago</span></div>
+      <button class="btn btn-secondary btn-sm">Detail</button>
+    </div>
+
+    <div class="live-row is-critical">
+      <span class="live-row-id">HMD-003</span>
+      <div class="live-row-student"><span class="live-row-student-name">Priya Mehta</span><span class="live-row-student-meta">Group A · On campus</span></div>
+      <span class="badge badge-critical">v2.1.0</span>
+      <div class="live-row-battery"><span class="live-row-battery-label">6%</span><div class="progress-track progress-track-sm"><div class="progress-fill progress-fill-critical" style="width:6%"></div></div></div>
+      <span class="badge badge-critical"><span class="status-dot dot-critical"></span> Critical</span>
+      <div class="live-row-live"><div class="live-dot dot-critical"></div><span class="live-timestamp">8 min ago</span></div>
+      <button class="btn btn-admin btn-sm">Action</button>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
