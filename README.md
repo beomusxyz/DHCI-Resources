@@ -2,6 +2,26 @@
 
 Greetings. Everything's in here. Don't skip the comments in the HTML — that's where the actual implementation notes live.
 
+---
+
+## Structure
+
+```
+DHCI-Resources/
+├── Wireframes/
+│   ├── nts_wireframes_sarah.html     Sarah Smith — Student screens (WP2)
+│   ├── nts_wireframes_brown.html     Dr Michael Brown — Lecturer screens (WP3)
+│   ├── nts_wireframes_ruby.html      Ruby Jones — Admin screens (WP4)
+│   └── fonts/                        TX-02 (Berkeley Mono) — full family
+├── Spec-Documents/
+│   ├── nts_component_library.html    Every component, rendered and annotated
+│   ├── nts_design_reference.html     Tokens, spacing grid, colour system, screen anatomy
+│   └── fonts/                        TX-02 (Berkeley Mono) — full family
+└── HI-Fi Resources/
+    ├── styles.css                    Shared stylesheet
+    ├── nts.js                        Shared JS
+    └── nts_snippets.html             Hi-fi component snippets
+```
 
 ---
 
@@ -9,15 +29,39 @@ Greetings. Everything's in here. Don't skip the comments in the HTML — that's 
 
 | File | What |
 |---|---|
-| `nts_wireframes_sarah.html` | Sarah Smith — Student screens (WP2) |
-| `nts_wireframes_brown.html` | Dr Michael Brown — Lecturer screens (WP3) |
-| `nts_wireframes_ruby.html` | Ruby Jones — Admin screens (WP4) |
-| `nts_component_library.html` | Every component, rendered and annotated |
-| `nts_design_reference.html` | Tokens, spacing grid, colour system, screen anatomy |
-| `fonts/` | TX-02 (Berkeley Mono) — full family |
-| `originals/` | Old versions. Ignore. |
+| `Wireframes/nts_wireframes_sarah.html` | Sarah Smith — Student screens (WP2) |
+| `Wireframes/nts_wireframes_brown.html` | Dr Michael Brown — Lecturer screens (WP3) |
+| `Wireframes/nts_wireframes_ruby.html` | Ruby Jones — Admin screens (WP4) |
+| `Spec-Documents/nts_component_library.html` | Every component, rendered and annotated |
+| `Spec-Documents/nts_design_reference.html` | Tokens, spacing grid, colour system, screen anatomy |
+| `Wireframes/fonts/` | TX-02 (Berkeley Mono) — full family |
+| `Spec-Documents/fonts/` | TX-02 (Berkeley Mono) — full family |
+| `HI-Fi Resources/styles.css` | Shared stylesheet |
+| `HI-Fi Resources/nts.js` | Shared JS |
+| `HI-Fi Resources/nts_snippets.html` | Hi-fi component snippets |
 
 Just open the HTML files in a browser. No build step.
+
+---
+
+## Hi-Fi Resources
+
+These three files are everything needed to build the hi-fi prototype. Don't rewrite any of it — just use it. Unless you want to fuck with idk, i'm not your dad. Can't tell you what to do.
+
+- **`styles.css`** — full design system as a single stylesheet. Link it and all tokens, components, dark mode, and typography rules are available. Every colour pairing in it is WCAG 2.1 AAA-verified. Don't introduce arbitrary hex values; use the tokens.
+- **`nts.js`** — minimal behaviour shim. Handles three things: dark mode toggle (persists to `localStorage`), toast auto-dismiss after 4s, and modal focus trap. Everything else in the design is CSS-only. Defer it.
+- **`nts_snippets.html`** — copy-paste component markup. Open it in a browser, find the component you need, copy the HTML, paste it into your prototype. Requires `styles.css` and `nts.js` to render correctly.
+
+Wire-up is two lines:
+
+```html
+<link rel="stylesheet" href="path/to/styles.css">
+<script src="path/to/nts.js" defer></script>
+```
+
+The fonts need to be in a `fonts/` directory at the same path level as `styles.css`. They're already there in the repo — just keep the folder structure intact.
+
+You are welcome sir.
 
 ---
 
@@ -45,7 +89,7 @@ All three share LG-01 (login) and the same layout grammar. Persona accent is jus
 
 ## Design system
 
-Read `nts_design_reference.html` first. It has everything: screen anatomy, spacing, colour tokens, typography scale.
+Read `Spec-Documents/nts_design_reference.html` first. It has everything: screen anatomy, spacing, colour tokens, typography scale.
 
 **Font — TX-02 (Berkeley Mono).** Don't substitute. Rules:
 - Retina weight for 11px and below
@@ -63,14 +107,13 @@ Read `nts_design_reference.html` first. It has everything: screen anatomy, spaci
 
 ## Components
 
-All in `nts_component_library.html`. Buttons are persona-scoped: `.btn-student`, `.btn-lecturer`, `.btn-admin`. The toggle uses CSS `:has(input:checked)` — no JS. HUD panels use `backdrop-filter: blur(4px)` with a semi-opaque fallback already defined (verify it works in your VR browser). Every element inside a HUD panel inherits `--font-condensed` — all of them.
+All in `Spec-Documents/nts_component_library.html`. Buttons are persona-scoped: `.btn-student`, `.btn-lecturer`, `.btn-admin`. The toggle uses CSS `:has(input:checked)` — no JS. HUD panels use `backdrop-filter: blur(4px)` with a semi-opaque fallback already defined (verify it works in your VR browser). Every element inside a HUD panel inherits `--font-condensed` — all of them.
 
 ---
 
 ## MONIL: warnings
 
 Critical implementation notes are flagged `MONIL:` in the comments throughout every file.
-
 
 Covers: browser support caveats, interaction states that need animating, required CSS properties, accessibility gotchas, component class names.
 
